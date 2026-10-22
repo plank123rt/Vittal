@@ -12,7 +12,7 @@
 .meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px} .pill{border:1px solid #ffffff40;background:#ffffff12;border-radius:999px;padding:6px 12px;font-size:.82rem}
 .wrap{max-width:1160px;margin:auto;padding:24px 20px 56px} .section-head{display:flex;align-items:end;justify-content:space-between;gap:14px;margin:28px 0 14px;flex-wrap:wrap} h2{font-size:1.35rem;margin:0;letter-spacing:-.02em} .sub{color:var(--muted);font-size:.9rem;margin:4px 0 0}
 .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px} .card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 4px 18px #18365a08;min-width:0}
-.metric-label{font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em} .metric-value{font-size:1.75rem;font-weight:800;letter-spacing:-.04em;margin:7px 0 2px} .metric-note{font-size:.82rem;color:var(--muted)} .good{color:var(--green)} .watch{color:var(--amber)} .blue{color:var(--blue)}
+.metric-label{font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em} .metric-value{font-size:1.75rem;font-weight:800;letter-spacing:-.04em;margin:7px 0 2px} .metric-note{font-size:.82rem;color:var(--muted)} .good{color:var(--green)} .watch{color:var(--amber)} .blue{color:var(--blue)} td.good-cell{background:var(--improve-bg)!important;color:#075c43!important;font-weight:750!important} td.watch-cell{background:#fff3dc!important;color:#8a5200!important;font-weight:750!important}
 .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px} .chart-card{padding:20px 20px 14px} .chart-title{font-weight:750;font-size:1rem;margin:0 0 2px} .chart-sub{color:var(--muted);font-size:.8rem;margin-bottom:14px} .canvas-box{height:270px;position:relative}
 .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:white} table{border-collapse:separate;border-spacing:0;width:100%;min-width:820px;font-size:.88rem} th,td{padding:12px 14px;border-bottom:1px solid #edf1f6;text-align:right;white-space:nowrap} tbody tr.improvement-row td{background:transparent;color:inherit;font-weight:500} tbody tr.improvement-row th{box-shadow:inset 4px 0 0 var(--improve)} td.improved-cell{background:var(--improve-bg)!important;color:#075c43!important;font-weight:800!important;border-radius:4px} thead th{background:#edf3fa;color:#40536f;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em} th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:white} thead th:first-child{background:#edf3fa;z-index:2} tbody th{font-weight:700} tbody th span{display:block;font-size:.72rem;color:var(--muted);font-weight:500} tbody tr:last-child th,tbody tr:last-child td{border-bottom:0} .latest{background:#eaf7f4!important;font-weight:800} .delta{display:inline-block;border-radius:999px;padding:3px 8px;font-size:.75rem;font-weight:750;background:#e7f6ef;color:#14764f}
 .compare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.compare.improvements{border-color:var(--improve-line);background:linear-gradient(180deg,#f1fcf6,#fff 65%)}.compare.improvements h3{color:var(--improve)}.compare.improvements .change strong{color:var(--improve)} .compare{padding:18px} .compare h3{font-size:1rem;margin:0 0 10px} .change{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid #edf1f6} .change strong{font-size:.95rem} .change small{display:block;color:var(--muted)} .callout{border:1px solid #f4d6a2;background:#fff9ec;border-radius:14px;padding:16px 18px;color:#70430b;font-size:.9rem;margin-top:16px} .foot{font-size:.78rem;color:var(--muted);margin-top:20px}
@@ -34,7 +34,7 @@
     <article class="card"><div class="metric-label">HDL cholesterol</div><div class="metric-value good">45</div><div class="metric-note">mg/dL · up from 39.5 in Jun 2026</div></article>
   </section>
 
-  <div class="section-head"><div><h2>Year-to-year and month-to-month comparison</h2><p class="sub">Green highlights are reserved for the specific October 2026 results that improved versus the stated comparison date. A dash means no value was listed for that date.</p></div><span style="display:inline-flex;align-items:center;gap:7px;color:#087f5b;font-size:.8rem;font-weight:750"><span style="width:10px;height:10px;border-radius:3px;background:#087f5b;display:inline-block"></span>Improvement</span></div>
+  <div class="section-head"><div><h2>Year-to-year and month-to-month comparison</h2><p class="sub">Green highlights indicate results within the stated reference range or values that improved versus an earlier measurement. A dash means no value was listed for that date.</p></div><span style="display:inline-flex;align-items:center;gap:7px;color:#087f5b;font-size:.8rem;font-weight:750"><span style="width:10px;height:10px;border-radius:3px;background:#087f5b;display:inline-block"></span>Normal range / improvement</span></div>
   <div class="table-wrap"><table><thead><tr><th>Test</th><th>Jun 2024</th><th>Dec 2024</th><th>Jun 2025</th><th>Jan 2026</th><th>Jun 2026</th><th>Oct 2026</th></tr></thead><tbody><tr><th scope='row'>Fasting glucose <span>mg/dL</span></th><td>104</td><td>123</td><td>106.6</td><td>135</td><td>100.2</td><td>109.6</tr><tr><th scope='row'>Post-meal glucose <span>mg/dL</span></th><td>186</td><td>161</td><td>146.8</td><td>269</td><td>112.5</td><td>170</tr><tr><th scope='row'>HbA1c <span>%</span></th><td>—</td><td>—</td><td>6.0</td><td>6.5</td><td>7.3</td><td class='improved-cell'>5.7</td></tr><tr><th scope='row'>Total cholesterol <span>mg/dL</span></th><td>175</td><td>192</td><td>172.8</td><td>—</td><td>150.1</td><td class="improved-cell">136</td></tr><tr><th scope='row'>Triglycerides <span>mg/dL</span></th><td>186</td><td>168</td><td>190.4</td><td>—</td><td>224.4</td><td class="improved-cell">120</td></tr><tr><th scope='row'>HDL cholesterol <span>mg/dL</span></th><td>53</td><td>46</td><td>45.8</td><td>—</td><td>39.5</td><td class="improved-cell">45</td></tr><tr><th scope='row'>LDL cholesterol <span>mg/dL</span></th><td>84.8</td><td>112.4</td><td>101.0</td><td>—</td><td>65.7</td><td>67</td></tr><tr><th scope='row'>Estimated average / mean blood glucose <span>mg/dL</span></th><td>—</td><td>—</td><td>126</td><td>139</td><td>162.8</td><td class='improved-cell'>116.89</td></tr><tr><th scope='row'>Total cholesterol / HDL ratio <span>ratio</span></th><td>3.3</td><td>4.1</td><td>3.77</td><td>—</td><td>3.80</td><td class='improved-cell'>3.02</td></tr><tr><th scope='row'>VLDL <span>mg/dL</span></th><td>37.2</td><td>33.6</td><td>26</td><td>—</td><td>44.9</td><td class="improved-cell">24</td></tr></tbody></table></div>
 
   <div class="section-head"><div><h2>Trend graphs</h2><p class="sub">Separate scales are used for glucose, HbA1c, and lipid measures so each trend remains readable.</p></div></div>
@@ -48,63 +48,63 @@
 
   <div class="section-head"><div><h2>Complete blood count: every reported marker</h2><p class="sub">All available historical CBC values plus the complete October 2026 CBC. Dates with no reported result are left blank.</p></div></div>
   <div class="table-wrap"><table><thead><tr><th>Blood marker</th><th>Unit</th><th>Jun 2025</th><th>Oct 2025</th><th>Jan 2026</th><th>Oct 2026</th><th>Oct 2026 lab interval</th></tr></thead><tbody>
-  <tr><th>Haemoglobin</th><td>g/dL</td><td>14.9</td><td>14.8</td><td>14.3</td><td>15.4</td><td>13.5–18.0</td></tr>
-  <tr><th>Red blood cell count (RBC)</th><td>million/µL</td><td>5.41</td><td>5.26</td><td>5.28</td><td>5.47</td><td>4.2–6.5</td></tr>
-  <tr><th>Haematocrit / PCV</th><td>%</td><td>—</td><td>—</td><td>—</td><td>45.9</td><td>39–54</td></tr>
-  <tr><th>MCV</th><td>fL</td><td>86.3</td><td>81.5</td><td>81.8</td><td>83.8</td><td>75–95</td></tr>
-  <tr><th>MCH</th><td>pg</td><td>—</td><td>—</td><td>—</td><td>28.2</td><td>26–32</td></tr>
-  <tr><th>MCHC</th><td>g/dL</td><td>—</td><td>—</td><td>—</td><td>34.0</td><td>30–35</td></tr>
-  <tr><th>RDW-CV</th><td>%</td><td>15.60</td><td>14.6</td><td>—</td><td>13.8</td><td>11.6–14.6</td></tr>
-  <tr><th>Platelet count</th><td>lakh/µL</td><td>2.47</td><td>2.42</td><td>2.64</td><td>2.67</td><td>1.5–4.4</td></tr>
-  <tr><th>Total WBC count</th><td>cells/µL</td><td>9000</td><td>9000</td><td>10100</td><td>8500</td><td>4000–11000</td></tr>
-  <tr><th>Neutrophils</th><td>%</td><td>52.7</td><td>56.3</td><td>52.0</td><td>53.7</td><td>40–75</td></tr>
-  <tr><th>Lymphocytes</th><td>%</td><td>39.7</td><td>33.6</td><td>40.0</td><td>34.6</td><td>20–45</td></tr>
-  <tr><th>Monocytes</th><td>%</td><td>—</td><td>—</td><td>—</td><td>6.8</td><td>1–10</td></tr>
-  <tr><th>Eosinophils</th><td>%</td><td>—</td><td>—</td><td>—</td><td>4.7</td><td>1–6</td></tr>
-  <tr><th>Basophils</th><td>%</td><td>—</td><td>—</td><td>—</td><td>0.2</td><td>0–1</td></tr>
-  <tr><th>Absolute neutrophil count</th><td>×10³/µL</td><td>—</td><td>—</td><td>—</td><td>4.60</td><td>2–7</td></tr>
-  <tr><th>Absolute lymphocyte count</th><td>×10³/µL</td><td>—</td><td>—</td><td>—</td><td>3.00</td><td>1–3</td></tr>
-  <tr><th>Absolute monocyte count</th><td>×10³/µL</td><td>—</td><td>—</td><td>—</td><td>0.60</td><td>0.2–1.0</td></tr>
-  <tr><th>Absolute eosinophil count</th><td>×10³/µL</td><td>—</td><td>—</td><td>—</td><td>0.40</td><td>0.02–0.5</td></tr>
-  <tr><th>Absolute basophil count</th><td>×10³/µL</td><td>—</td><td>—</td><td>—</td><td>0.00</td><td>0.01–0.05</td></tr>
+  <tr><th>Haemoglobin</th><td>g/dL</td><td>14.9</td><td class="good-cell">14.8</td><td class="good-cell">14.3</td><td class="good-cell">15.4</td><td>13.5–18.0</td></tr>
+  <tr><th>Red blood cell count (RBC)</th><td>million/µL</td><td class="good-cell">5.41</td><td class="good-cell">5.26</td><td class="good-cell">5.28</td><td class="good-cell">5.47</td><td>4.2–6.5</td></tr>
+  <tr><th>Haematocrit / PCV</th><td>%</td><td>—</td><td>—</td><td class="good-cell">—</td><td class="good-cell">45.9</td><td>39–54</td></tr>
+  <tr><th>MCV</th><td>fL</td><td class="good-cell">86.3</td><td class="good-cell">81.5</td><td class="good-cell">81.8</td><td class="good-cell">83.8</td><td>75–95</td></tr>
+  <tr><th>MCH</th><td>pg</td><td>—</td><td>—</td><td class="good-cell">—</td><td class="good-cell">28.2</td><td>26–32</td></tr>
+  <tr><th>MCHC</th><td>g/dL</td><td>—</td><td>—</td><td class="good-cell">—</td><td class="good-cell">34.0</td><td>30–35</td></tr>
+  <tr><th>RDW-CV</th><td>%</td><td>15.60</td><td class="good-cell">14.6</td><td class="good-cell">—</td><td class="good-cell">13.8</td><td>11.6–14.6</td></tr>
+  <tr><th>Platelet count</th><td>lakh/µL</td><td class="good-cell">2.47</td><td class="good-cell">2.42</td><td class="good-cell">2.64</td><td class="good-cell">2.67</td><td>1.5–4.4</td></tr>
+  <tr><th>Total WBC count</th><td>cells/µL</td><td class="good-cell">9000</td><td class="good-cell">9000</td><td class="good-cell">10100</td><td class="good-cell">8500</td><td>4000–11000</td></tr>
+  <tr><th>Neutrophils</th><td>%</td><td class="good-cell">52.7</td><td class="good-cell">56.3</td><td class="good-cell">52.0</td><td class="good-cell">53.7</td><td>40–75</td></tr>
+  <tr><th>Lymphocytes</th><td>%</td><td class="good-cell">39.7</td><td class="good-cell">33.6</td><td class="good-cell">40.0</td><td class="good-cell">34.6</td><td>20–45</td></tr>
+  <tr><th>Monocytes</th><td>%</td><td>—</td><td>—</td><td class="good-cell">—</td><td class="good-cell">6.8</td><td>1–10</td></tr>
+  <tr><th>Eosinophils</th><td>%</td><td>—</td><td>—</td><td class="good-cell">—</td><td class="good-cell">4.7</td><td>1–6</td></tr>
+  <tr><th>Basophils</th><td>%</td><td>—</td><td>—</td><td class="good-cell">—</td><td class="good-cell">0.2</td><td>0–1</td></tr>
+  <tr><th>Absolute neutrophil count</th><td>×10³/µL</td><td>—</td><td>—</td><td class="good-cell">—</td><td class="good-cell">4.60</td><td>2–7</td></tr>
+  <tr><th>Absolute lymphocyte count</th><td>×10³/µL</td><td>—</td><td>—</td><td class="good-cell">—</td><td class="good-cell">3.00</td><td>1–3</td></tr>
+  <tr><th>Absolute monocyte count</th><td>×10³/µL</td><td>—</td><td>—</td><td class="good-cell">—</td><td class="good-cell">0.60</td><td>0.2–1.0</td></tr>
+  <tr><th>Absolute eosinophil count</th><td>×10³/µL</td><td>—</td><td>—</td><td class="good-cell">—</td><td class="good-cell">0.40</td><td>0.02–0.5</td></tr>
+  <tr><th>Absolute basophil count</th><td>×10³/µL</td><td>—</td><td>—</td><td class="watch-cell">—</td><td>0.00</td><td>0.01–0.05</td></tr>
   </tbody></table></div>
 
   <div class="section-head"><div><h2>Other blood chemistry and organ-function markers</h2><p class="sub">Historical values are shown at their recorded date. The supplied October 2026 report does not include repeat kidney, liver, thyroid, vitamin or iron tests, so those values are not presented as current.</p></div></div>
   <div class="table-wrap"><table><thead><tr><th>Panel</th><th>Marker</th><th>Historical result</th><th>Historical date in summary</th><th>Reference interval in supplied summary</th></tr></thead><tbody>
   <tr><th rowspan="6">Kidney / electrolytes</th><th>Serum urea</th><td>15.5 mg/dL</td><td>Jan 2026</td><td>19–43</td></tr>
-  <tr><th>Blood urea nitrogen (BUN)</th><td>7.24 mg/dL</td><td>Jan 2026</td><td>6–20</td></tr>
-  <tr><th>Serum creatinine</th><td>0.80 mg/dL</td><td>Jan 2026</td><td>0.67–1.17</td></tr>
-  <tr><th>Serum uric acid</th><td>5.40 mg/dL</td><td>Jan 2026</td><td>3.4–7.0</td></tr>
-  <tr><th>Sodium</th><td>140 mmol/L</td><td>Jan 2026</td><td>136–145</td></tr>
-  <tr><th>Potassium</th><td>4.34 mmol/L</td><td>Jan 2026</td><td>3.5–5.1</td></tr>
-  <tr><th rowspan="8">Liver / proteins</th><th>Total bilirubin</th><td>0.57 mg/dL</td><td>Jan 2026</td><td>&lt;1.2</td></tr>
-  <tr><th>Direct bilirubin</th><td>0.22 mg/dL</td><td>Jan 2026</td><td>0–0.3</td></tr>
-  <tr><th>Total protein</th><td>7.57 g/dL</td><td>Jan 2026</td><td>6.4–8.3</td></tr>
-  <tr><th>Albumin</th><td>4.63 g/dL</td><td>Jan 2026</td><td>3.97–4.94</td></tr>
-  <tr><th>AST / SGOT</th><td>21.8 U/L</td><td>Jan 2026</td><td>10–50</td></tr>
-  <tr><th>ALT / SGPT</th><td>22.6 U/L</td><td>Jan 2026</td><td>&lt;41</td></tr>
-  <tr><th>Alkaline phosphatase (ALP)</th><td>99.5 U/L</td><td>Jan 2026</td><td>40–129</td></tr>
-  <tr><th>GGT</th><td>13.7 U/L</td><td>Jan 2026</td><td>8–61</td></tr>
-  <tr><th rowspan="6">Thyroid / other</th><th>Total T3</th><td>1.07 ng/mL</td><td>Jan 2026</td><td>0.8–2.0</td></tr>
-  <tr><th>Total T4</th><td>6.85 µg/dL</td><td>Jan 2026</td><td>5.1–14.1</td></tr>
-  <tr><th>TSH (ultrasensitive)</th><td>2.71 µIU/mL</td><td>Jan 2026</td><td>0.27–4.20</td></tr>
-  <tr><th>Total PSA</th><td>0.77 ng/mL</td><td>Jan 2026</td><td>&lt;4.0</td></tr>
-  <tr><th>Vitamin D (25-OH)</th><td>23.1 ng/mL</td><td>Jan 2026</td><td>30–100</td></tr>
-  <tr><th>Vitamin B12</th><td>809 pg/mL</td><td>Jan 2026</td><td>197–771</td></tr>
-  <tr><th rowspan="5">Iron profile</th><th>Serum iron</th><td>86.1 µg/dL</td><td>Jan 2026</td><td>70–180</td></tr>
-  <tr><th>TIBC</th><td>341.1 µg/dL</td><td>Jan 2026</td><td>250–450</td></tr>
-  <tr><th>Transferrin</th><td>238.8 mg/dL</td><td>Jan 2026</td><td>215–365</td></tr>
-  <tr><th>Transferrin saturation</th><td>25.6%</td><td>Jan 2026</td><td>16–50</td></tr>
-  <tr><th>Ferritin</th><td>62.4 µg/L</td><td>Jan 2026</td><td>30–400</td></tr>
+  <tr><th>Blood urea nitrogen (BUN)</th><td class="good-cell">7.24 mg/dL</td><td>Jan 2026</td><td>6–20</td></tr>
+  <tr><th>Serum creatinine</th><td class="good-cell">0.80 mg/dL</td><td>Jan 2026</td><td>0.67–1.17</td></tr>
+  <tr><th>Serum uric acid</th><td class="good-cell">5.40 mg/dL</td><td>Jan 2026</td><td>3.4–7.0</td></tr>
+  <tr><th>Sodium</th><td class="good-cell">140 mmol/L</td><td>Jan 2026</td><td>136–145</td></tr>
+  <tr><th>Potassium</th><td class="good-cell">4.34 mmol/L</td><td>Jan 2026</td><td>3.5–5.1</td></tr>
+  <tr><th rowspan="8">Liver / proteins</th><th>Total bilirubin</th><td class="good-cell">0.57 mg/dL</td><td>Jan 2026</td><td>&lt;1.2</td></tr>
+  <tr><th>Direct bilirubin</th><td class="good-cell">0.22 mg/dL</td><td>Jan 2026</td><td>0–0.3</td></tr>
+  <tr><th>Total protein</th><td class="good-cell">7.57 g/dL</td><td>Jan 2026</td><td>6.4–8.3</td></tr>
+  <tr><th>Albumin</th><td class="good-cell">4.63 g/dL</td><td>Jan 2026</td><td>3.97–4.94</td></tr>
+  <tr><th>AST / SGOT</th><td class="good-cell">21.8 U/L</td><td>Jan 2026</td><td>10–50</td></tr>
+  <tr><th>ALT / SGPT</th><td class="good-cell">22.6 U/L</td><td>Jan 2026</td><td>&lt;41</td></tr>
+  <tr><th>Alkaline phosphatase (ALP)</th><td class="good-cell">99.5 U/L</td><td>Jan 2026</td><td>40–129</td></tr>
+  <tr><th>GGT</th><td class="good-cell">13.7 U/L</td><td>Jan 2026</td><td>8–61</td></tr>
+  <tr><th rowspan="6">Thyroid / other</th><th>Total T3</th><td class="good-cell">1.07 ng/mL</td><td>Jan 2026</td><td>0.8–2.0</td></tr>
+  <tr><th>Total T4</th><td class="good-cell">6.85 µg/dL</td><td>Jan 2026</td><td>5.1–14.1</td></tr>
+  <tr><th>TSH (ultrasensitive)</th><td class="good-cell">2.71 µIU/mL</td><td>Jan 2026</td><td>0.27–4.20</td></tr>
+  <tr><th>Total PSA</th><td class="good-cell">0.77 ng/mL</td><td>Jan 2026</td><td>&lt;4.0</td></tr>
+  <tr><th>Vitamin D (25-OH)</th><td class="watch-cell">23.1 ng/mL</td><td>Jan 2026</td><td>30–100</td></tr>
+  <tr><th>Vitamin B12</th><td class="watch-cell">809 pg/mL</td><td>Jan 2026</td><td>197–771</td></tr>
+  <tr><th rowspan="5">Iron profile</th><th>Serum iron</th><td class="good-cell">86.1 µg/dL</td><td>Jan 2026</td><td>70–180</td></tr>
+  <tr><th>TIBC</th><td class="good-cell">341.1 µg/dL</td><td>Jan 2026</td><td>250–450</td></tr>
+  <tr><th>Transferrin</th><td class="good-cell">238.8 mg/dL</td><td>Jan 2026</td><td>215–365</td></tr>
+  <tr><th>Transferrin saturation</th><td class="good-cell">25.6%</td><td>Jan 2026</td><td>16–50</td></tr>
+  <tr><th>Ferritin</th><td class="good-cell">62.4 µg/L</td><td>Jan 2026</td><td>30–400</td></tr>
   </tbody></table></div>
 
   <div class="section-head"><div><h2>Additional October 2026 calculated markers</h2><p class="sub">These are also blood-report results and are included rather than quietly disappearing into the footnotes.</p></div></div>
   <div class="table-wrap"><table><thead><tr><th>Marker</th><th>October 2026 result</th><th>Laboratory reference / interpretation</th></tr></thead><tbody>
-  <tr><th>Mean blood glucose (derived from HbA1c)</th><td>116.89 mg/dL</td><td>≤115 mg/dL in report</td></tr>
-  <tr><th>Total cholesterol / HDL ratio</th><td>3.02</td><td>&lt;4.5 in report</td></tr>
+  <tr><th>Mean blood glucose (derived from HbA1c)</th><td class="watch-cell">116.89 mg/dL</td><td>≤115 mg/dL in report</td></tr>
+  <tr><th>Total cholesterol / HDL ratio</th><td class="good-cell">3.02</td><td>&lt;4.5 in report</td></tr>
   </tbody></table></div>
 
-  <div class="section-head"><div><h2>Improvements by October 2026</h2><p class="sub">Only improvements are highlighted below.</p></div></div>
+  <div class="section-head"><div><h2>Key changes by October 2026</h2><p class="sub">The comparisons below show selected changes across the available dates.</p></div></div>
   <section class="compare-grid">
     <article class="card compare improvements"><h3>Glucose regulation</h3>
       <div class="change"><div><strong>HbA1c</strong><small>Jun 2026 → Oct 2026</small></div><strong>7.3% → 5.7%</strong></div>
@@ -118,7 +118,6 @@
       <div class="change"><div><strong>VLDL</strong><small>Jun 2026 → Oct 2026</small></div><strong>44.9 → 24</strong></div>
     </article>
   </section>
-  <p class="foot">Complete marker inventory compiled from the supplied reports. Historical kidney/liver, thyroid, vitamin and iron results are explicitly dated as historical; they were not repeated in the October 2026 report. Urine and echocardiography findings are not blood markers and are therefore not included in these blood-marker tables.</p>
 </main>
 <script>
 const labels = ["Jun 2024", "Dec 2024", "Jun 2025", "Jan 2026", "Jun 2026", "Oct 2026"];
