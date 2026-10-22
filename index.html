@@ -1,1215 +1,141 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Health Report — Mr. Vittala Nadumane</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Longitudinal Health Report | Mr. Vittala Nadumane</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f7f8fa; color: #1a1a2e; line-height: 1.6; }
-
-  .page-header { background: linear-gradient(135deg, #0f4c81 0%, #1a7a5e 100%); color: white; padding: 2.5rem 2rem 2rem; }
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; }
-  .patient-info h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.25rem; }
-  .patient-meta { display: flex; gap: 1.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
-  .meta-item { font-size: 0.85rem; opacity: 0.85; }
-  .meta-item strong { opacity: 1; font-weight: 600; }
-  .report-badge { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; padding: 0.75rem 1.25rem; text-align: right; }
-  .report-badge .label { font-size: 0.75rem; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.05em; }
-  .report-badge .value { font-size: 1rem; font-weight: 600; margin-top: 0.2rem; }
-
-  .disclaimer { background: #fff8e1; border-left: 4px solid #f59e0b; padding: 0.75rem 1rem; font-size: 0.82rem; color: #78350f; margin: 0; }
-
-  .container { max-width: 980px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
-
-  .section { margin-bottom: 2.5rem; }
-  .section-title { font-size: 1.1rem; font-weight: 700; color: #0f4c81; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
-  .section-title .icon { width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: white; flex-shrink: 0; }
-
-  .timeline-bar { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; }
-  .tl-dot { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: #64748b; }
-  .tl-dot span { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
-
-  /* Summary cards */
-  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-  .summary-card { background: white; border-radius: 12px; padding: 1rem 1.25rem; border: 0.5px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-  .summary-card .sc-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
-  .summary-card .sc-value { font-size: 1.6rem; font-weight: 700; }
-  .summary-card .sc-sub { font-size: 0.8rem; color: #64748b; margin-top: 0.2rem; }
-  .trend-up { color: #dc2626; }
-  .trend-down { color: #16a34a; }
-  .trend-neutral { color: #2563eb; }
-  .trend-warn { color: #d97706; }
-
-  /* Chart container */
-  .chart-wrap { background: white; border-radius: 12px; padding: 1.25rem; border: 0.5px solid #e2e8f0; margin-bottom: 1rem; }
-  .chart-title { font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 0.75rem; }
-  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  @media (max-width: 620px) { .chart-grid { grid-template-columns: 1fr; } }
-
-  /* Detailed table */
-  .detail-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: white; border-radius: 12px; overflow: hidden; border: 0.5px solid #e2e8f0; }
-  .detail-table th { background: #f1f5f9; color: #374151; font-weight: 600; padding: 0.65rem 1rem; text-align: left; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #e2e8f0; }
-  .detail-table td { padding: 0.65rem 1rem; border-bottom: 0.5px solid #f1f5f9; vertical-align: middle; }
-  .detail-table tr:last-child td { border-bottom: none; }
-  .detail-table tr:hover td { background: #f8fafc; }
-  .param-name { font-weight: 500; color: #1e293b; }
-  .param-sub { font-size: 0.75rem; color: #94a3b8; }
-
-  .badge { display: inline-block; padding: 0.2rem 0.55rem; border-radius: 5px; font-size: 0.73rem; font-weight: 600; }
-  .badge-ok { background: #dcfce7; color: #15803d; }
-  .badge-high { background: #fee2e2; color: #b91c1c; }
-  .badge-low { background: #fef3c7; color: #92400e; }
-  .badge-border { background: #fef9c3; color: #854d0e; }
-  .badge-improved { background: #dbeafe; color: #1d4ed8; }
-
-  .arrow-up::after { content: ' ↑'; }
-  .arrow-down::after { content: ' ↓'; }
-  .arrow-same::after { content: ' →'; }
-
-  /* Progress bar for values */
-  .prog-bar { height: 5px; background: #e2e8f0; border-radius: 3px; margin-top: 3px; overflow: hidden; width: 120px; }
-  .prog-fill { height: 100%; border-radius: 3px; }
-
-  /* Insight cards */
-  .insight-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
-  .insight-card { background: white; border-radius: 12px; padding: 1.25rem; border: 0.5px solid #e2e8f0; }
-  .insight-card .ic-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
-  .insight-card .ic-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
-  .insight-card h4 { font-size: 0.9rem; font-weight: 600; }
-  .insight-card p { font-size: 0.82rem; color: #475569; line-height: 1.55; }
-  .ic-green .ic-icon { background: #dcfce7; }
-  .ic-red .ic-icon { background: #fee2e2; }
-  .ic-amber .ic-icon { background: #fef3c7; }
-  .ic-blue .ic-icon { background: #dbeafe; }
-
-  .footer { text-align: center; font-size: 0.78rem; color: #94a3b8; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; }
-
-  .highlight-row td { background: #fffbeb !important; }
-  .concern-row td { background: #fff1f2 !important; }
-
-  .echo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; }
-  .echo-item { background: white; border-radius: 10px; padding: 0.85rem 1rem; border: 0.5px solid #e2e8f0; }
-  .echo-item .ei-label { font-size: 0.75rem; color: #64748b; margin-bottom: 0.2rem; }
-  .echo-item .ei-val { font-size: 1.1rem; font-weight: 700; color: #0f4c81; }
-  .echo-item .ei-ref { font-size: 0.7rem; color: #94a3b8; }
-
-  .progress-section { margin-top: 0.5rem; }
-  .progress-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; }
-  .progress-label { font-size: 0.75rem; color: #64748b; width: 90px; flex-shrink: 0; }
-  .progress-bar-outer { flex: 1; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
-  .progress-bar-fill { height: 100%; border-radius: 3px; }
-  .progress-val { font-size: 0.75rem; font-weight: 600; color: #374151; width: 50px; text-align: right; }
-</style>
-</head>
+:root{--ink:#172b4d;--muted:#607089;--line:#e2e8f0;--paper:#fff;--bg:#f3f6fb;--blue:#2563eb;--teal:#0f9d8a;--violet:#7856d6;--amber:#d97706;--red:#dc5454;--green:#16835f;--improve:#087f5b;--improve-bg:#e2f7ed;--improve-line:#9cdec0}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);line-height:1.55}
+.hero{background:linear-gradient(120deg,#102c52,#145e68 75%,#2a8a83);color:white;padding:38px max(22px,calc((100% - 1160px)/2)) 32px}
+.kicker{font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;opacity:.78;font-weight:700} h1{font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.1;margin:.55rem 0} .hero p{margin:.5rem 0 0;max-width:760px;color:#e3f4f4}
+.meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px} .pill{border:1px solid #ffffff40;background:#ffffff12;border-radius:999px;padding:6px 12px;font-size:.82rem}
+.wrap{max-width:1160px;margin:auto;padding:24px 20px 56px} .section-head{display:flex;align-items:end;justify-content:space-between;gap:14px;margin:28px 0 14px;flex-wrap:wrap} h2{font-size:1.35rem;margin:0;letter-spacing:-.02em} .sub{color:var(--muted);font-size:.9rem;margin:4px 0 0}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px} .card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 4px 18px #18365a08;min-width:0}
+.metric-label{font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em} .metric-value{font-size:1.75rem;font-weight:800;letter-spacing:-.04em;margin:7px 0 2px} .metric-note{font-size:.82rem;color:var(--muted)} .good{color:var(--green)} .watch{color:var(--amber)} .blue{color:var(--blue)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px} .chart-card{padding:20px 20px 14px} .chart-title{font-weight:750;font-size:1rem;margin:0 0 2px} .chart-sub{color:var(--muted);font-size:.8rem;margin-bottom:14px} .canvas-box{height:270px;position:relative}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:white} table{border-collapse:separate;border-spacing:0;width:100%;min-width:820px;font-size:.88rem} th,td{padding:12px 14px;border-bottom:1px solid #edf1f6;text-align:right;white-space:nowrap} tbody tr.improvement-row td{background:transparent;color:inherit;font-weight:500} tbody tr.improvement-row th{box-shadow:inset 4px 0 0 var(--improve)} td.improved-cell{background:var(--improve-bg)!important;color:#075c43!important;font-weight:800!important;border-radius:4px} thead th{background:#edf3fa;color:#40536f;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em} th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:white} thead th:first-child{background:#edf3fa;z-index:2} tbody th{font-weight:700} tbody th span{display:block;font-size:.72rem;color:var(--muted);font-weight:500} tbody tr:last-child th,tbody tr:last-child td{border-bottom:0} .latest{background:#eaf7f4!important;font-weight:800} .delta{display:inline-block;border-radius:999px;padding:3px 8px;font-size:.75rem;font-weight:750;background:#e7f6ef;color:#14764f}
+.compare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.compare.improvements{border-color:var(--improve-line);background:linear-gradient(180deg,#f1fcf6,#fff 65%)}.compare.improvements h3{color:var(--improve)}.compare.improvements .change strong{color:var(--improve)} .compare{padding:18px} .compare h3{font-size:1rem;margin:0 0 10px} .change{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid #edf1f6} .change strong{font-size:.95rem} .change small{display:block;color:var(--muted)} .callout{border:1px solid #f4d6a2;background:#fff9ec;border-radius:14px;padding:16px 18px;color:#70430b;font-size:.9rem;margin-top:16px} .foot{font-size:.78rem;color:var(--muted);margin-top:20px}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two,.compare-grid{grid-template-columns:1fr}} @media(max-width:480px){.grid{grid-template-columns:1fr}.hero{padding-top:28px}.wrap{padding:18px 12px 40px}}
+</style></head>
 <body>
+<header class="hero">
+  <div class="kicker">Longitudinal health report · updated 22 October 2026</div>
+  <h1>Mr. Vittala Nadumane</h1>
+  <p>A comprehensive chronological view of every blood marker available in the supplied historical summary and the 17 October 2026 laboratory report, including glucose, lipids, complete blood count, kidney, liver, thyroid, vitamins, iron and other measured markers.</p>
+  <div class="meta"><span class="pill">Age: 58 years</span><span class="pill">Sex: Male</span><span class="pill">Historical window: Jun 2024–Jun 2026</span><span class="pill">Latest report: Oct 2026</span></div>
+</header>
+<main class="wrap">
+  <div class="section-head"><div><h2>Latest results at a glance</h2><p class="sub">October 2026 results, with the closest previous comparison where available.</p></div></div>
+  <section class="grid">
+    <article class="card"><div class="metric-label">HbA1c</div><div class="metric-value good">5.7%</div><div class="metric-note">Down from 7.3% in Jun 2026 · still at the lab's prediabetes threshold</div></article>
+    <article class="card"><div class="metric-label">Fasting glucose</div><div class="metric-value watch">109.6</div><div class="metric-note">mg/dL · 100.2 in Jun 2026; 135 in Jan 2026</div></article>
+    <article class="card"><div class="metric-label">Triglycerides</div><div class="metric-value good">120</div><div class="metric-note">mg/dL · down from 224.4 in Jun 2026</div></article>
+    <article class="card"><div class="metric-label">HDL cholesterol</div><div class="metric-value good">45</div><div class="metric-note">mg/dL · up from 39.5 in Jun 2026</div></article>
+  </section>
 
-<div class="page-header">
-  <div class="header-top">
-    <div class="patient-info">
-      <div style="font-size:0.8rem; opacity:0.7; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.25rem;">Comprehensive Health Summary</div>
-      <h1>Mr. Vittala Nadumane</h1>
-      <div class="patient-meta">
-        <div class="meta-item">Age: <strong>58 years</strong></div>
-        <div class="meta-item">Sex: <strong>Male</strong></div>
-        <div class="meta-item">UHID: <strong>33348</strong></div>
-        <div class="meta-item">Ref. Dr: <strong>Dr. Arun C Naik / Dr. RMO</strong></div>
-      </div>
-    </div>
-    <div class="report-badge">
-      <div class="label">Report compiled</div>
-      <div class="value">Updated 22 October 2026</div>
-      <div style="font-size:0.75rem; opacity:0.7; margin-top:0.25rem;">Historical summary: Jun 2024 – Jun 2026 · Latest report: 17 Oct 2026</div>
-    </div>
-  </div>
-</div>
+  <div class="section-head"><div><h2>Year-to-year and month-to-month comparison</h2><p class="sub">Green highlights are reserved for the specific October 2026 results that improved versus the stated comparison date. A dash means no value was listed for that date.</p></div><span style="display:inline-flex;align-items:center;gap:7px;color:#087f5b;font-size:.8rem;font-weight:750"><span style="width:10px;height:10px;border-radius:3px;background:#087f5b;display:inline-block"></span>Improvement</span></div>
+  <div class="table-wrap"><table><thead><tr><th>Test</th><th>Jun 2024</th><th>Dec 2024</th><th>Jun 2025</th><th>Jan 2026</th><th>Jun 2026</th><th>Oct 2026</th></tr></thead><tbody><tr><th scope='row'>Fasting glucose <span>mg/dL</span></th><td>104</td><td>123</td><td>106.6</td><td>135</td><td>100.2</td><td>109.6</tr><tr><th scope='row'>Post-meal glucose <span>mg/dL</span></th><td>186</td><td>161</td><td>146.8</td><td>269</td><td>112.5</td><td>170</tr><tr><th scope='row'>HbA1c <span>%</span></th><td>—</td><td>—</td><td>6.0</td><td>6.5</td><td>7.3</td><td class='improved-cell'>5.7</td></tr><tr><th scope='row'>Total cholesterol <span>mg/dL</span></th><td>175</td><td>192</td><td>172.8</td><td>—</td><td>150.1</td><td class="improved-cell">136</td></tr><tr><th scope='row'>Triglycerides <span>mg/dL</span></th><td>186</td><td>168</td><td>190.4</td><td>—</td><td>224.4</td><td class="improved-cell">120</td></tr><tr><th scope='row'>HDL cholesterol <span>mg/dL</span></th><td>53</td><td>46</td><td>45.8</td><td>—</td><td>39.5</td><td class="improved-cell">45</td></tr><tr><th scope='row'>LDL cholesterol <span>mg/dL</span></th><td>84.8</td><td>112.4</td><td>101.0</td><td>—</td><td>65.7</td><td>67</td></tr><tr><th scope='row'>Estimated average / mean blood glucose <span>mg/dL</span></th><td>—</td><td>—</td><td>126</td><td>139</td><td>162.8</td><td class='improved-cell'>116.89</td></tr><tr><th scope='row'>Total cholesterol / HDL ratio <span>ratio</span></th><td>3.3</td><td>4.1</td><td>3.77</td><td>—</td><td>3.80</td><td class='improved-cell'>3.02</td></tr><tr><th scope='row'>VLDL <span>mg/dL</span></th><td>37.2</td><td>33.6</td><td>26</td><td>—</td><td>44.9</td><td class="improved-cell">24</td></tr></tbody></table></div>
 
-<div class="disclaimer">
-  ⚠️ This report is a patient-facing summary compiled from multiple lab reports for informational purposes only. All values should be interpreted in clinical context by the treating physician. Not for medico-legal use.
-</div>
+  <div class="section-head"><div><h2>Trend graphs</h2><p class="sub">Separate scales are used for glucose, HbA1c, and lipid measures so each trend remains readable.</p></div></div>
+  <section class="two">
+    <article class="card chart-card"><h3 class="chart-title">Glucose measurements</h3><div class="chart-sub">mg/dL · fasting and post-meal values</div><div class="canvas-box"><canvas id="glucoseChart"></canvas></div></article>
+    <article class="card chart-card"><h3 class="chart-title">HbA1c</h3><div class="chart-sub">% · reported measurements only</div><div class="canvas-box"><canvas id="a1cChart"></canvas></div></article>
+    <article class="card chart-card"><h3 class="chart-title">Cholesterol profile</h3><div class="chart-sub">mg/dL · total cholesterol, LDL and HDL</div><div class="canvas-box"><canvas id="cholChart"></canvas></div></article>
+    <article class="card chart-card"><h3 class="chart-title">Triglycerides and VLDL</h3><div class="chart-sub">mg/dL · plotted as separate series for comparison</div><div class="canvas-box"><canvas id="tgChart"></canvas></div></article>
+  </section>
 
-<div class="container">
 
-  <!-- LATEST INVESTIGATION: 17 OCTOBER 2026 -->
-  <div class="section" style="background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:1.25rem;">
-    <div class="section-title">
-      <span class="icon" style="background:#0f766e;">NEW</span>
-      Latest Investigation Report · 17 October 2026
-    </div>
-    <p style="font-size:0.88rem;color:#475569;margin:-0.4rem 0 1rem;">
-      Added from the Prima Diagnostics report collected on 17 October 2026 and reported on the same day. This section contains the newly supplied results. The historical sections below retain the older values and dates from the existing summary; they should not be read as the latest results where a newer result is listed here.
-    </p>
-    <div class="summary-grid">
-      <div class="summary-card">
-        <div class="sc-label">Fasting Blood Glucose</div>
-        <div class="sc-value trend-warn">109.6 mg/dL</div>
-        <div class="sc-sub">Lab reference: normal &lt;100; prediabetes range 100–125</div>
-      </div>
-      <div class="summary-card">
-        <div class="sc-label">Post-Prandial Glucose</div>
-        <div class="sc-value trend-warn">170 mg/dL</div>
-        <div class="sc-sub">Lab reference: normal &lt;140; prediabetes range 140–199</div>
-      </div>
-      <div class="summary-card">
-        <div class="sc-label">HbA1c</div>
-        <div class="sc-value trend-warn">5.7%</div>
-        <div class="sc-sub">At the laboratory's prediabetes threshold (5.7–6.4%)</div>
-      </div>
-      <div class="summary-card">
-        <div class="sc-label">Total WBC Count</div>
-        <div class="sc-value trend-neutral">8,500</div>
-        <div class="sc-sub">Cells/cu mm · within lab range 4,000–11,000</div>
-      </div>
-    </div>
+  <div class="section-head"><div><h2>Complete blood count: every reported marker</h2><p class="sub">All available historical CBC values plus the complete October 2026 CBC. Dates with no reported result are left blank.</p></div></div>
+  <div class="table-wrap"><table><thead><tr><th>Blood marker</th><th>Unit</th><th>Jun 2025</th><th>Oct 2025</th><th>Jan 2026</th><th>Oct 2026</th><th>Oct 2026 lab interval</th></tr></thead><tbody>
+  <tr><th>Haemoglobin</th><td>g/dL</td><td>14.9</td><td>14.8</td><td>14.3</td><td>15.4</td><td>13.5–18.0</td></tr>
+  <tr><th>Red blood cell count (RBC)</th><td>million/µL</td><td>5.41</td><td>5.26</td><td>5.28</td><td>5.47</td><td>4.2–6.5</td></tr>
+  <tr><th>Haematocrit / PCV</th><td>%</td><td>—</td><td>—</td><td>—</td><td>45.9</td><td>39–54</td></tr>
+  <tr><th>MCV</th><td>fL</td><td>86.3</td><td>81.5</td><td>81.8</td><td>83.8</td><td>75–95</td></tr>
+  <tr><th>MCH</th><td>pg</td><td>—</td><td>—</td><td>—</td><td>28.2</td><td>26–32</td></tr>
+  <tr><th>MCHC</th><td>g/dL</td><td>—</td><td>—</td><td>—</td><td>34.0</td><td>30–35</td></tr>
+  <tr><th>RDW-CV</th><td>%</td><td>15.60</td><td>14.6</td><td>—</td><td>13.8</td><td>11.6–14.6</td></tr>
+  <tr><th>Platelet count</th><td>lakh/µL</td><td>2.47</td><td>2.42</td><td>2.64</td><td>2.67</td><td>1.5–4.4</td></tr>
+  <tr><th>Total WBC count</th><td>cells/µL</td><td>9000</td><td>9000</td><td>10100</td><td>8500</td><td>4000–11000</td></tr>
+  <tr><th>Neutrophils</th><td>%</td><td>52.7</td><td>56.3</td><td>52.0</td><td>53.7</td><td>40–75</td></tr>
+  <tr><th>Lymphocytes</th><td>%</td><td>39.7</td><td>33.6</td><td>40.0</td><td>34.6</td><td>20–45</td></tr>
+  <tr><th>Monocytes</th><td>%</td><td>—</td><td>—</td><td>—</td><td>6.8</td><td>1–10</td></tr>
+  <tr><th>Eosinophils</th><td>%</td><td>—</td><td>—</td><td>—</td><td>4.7</td><td>1–6</td></tr>
+  <tr><th>Basophils</th><td>%</td><td>—</td><td>—</td><td>—</td><td>0.2</td><td>0–1</td></tr>
+  <tr><th>Absolute neutrophil count</th><td>×10³/µL</td><td>—</td><td>—</td><td>—</td><td>4.60</td><td>2–7</td></tr>
+  <tr><th>Absolute lymphocyte count</th><td>×10³/µL</td><td>—</td><td>—</td><td>—</td><td>3.00</td><td>1–3</td></tr>
+  <tr><th>Absolute monocyte count</th><td>×10³/µL</td><td>—</td><td>—</td><td>—</td><td>0.60</td><td>0.2–1.0</td></tr>
+  <tr><th>Absolute eosinophil count</th><td>×10³/µL</td><td>—</td><td>—</td><td>—</td><td>0.40</td><td>0.02–0.5</td></tr>
+  <tr><th>Absolute basophil count</th><td>×10³/µL</td><td>—</td><td>—</td><td>—</td><td>0.00</td><td>0.01–0.05</td></tr>
+  </tbody></table></div>
 
-    <h3 style="font-size:0.95rem;color:#0f4c81;margin:1.25rem 0 0.65rem;">Glucose regulation</h3>
-    <table class="detail-table">
-      <thead><tr><th>Test</th><th>Latest result</th><th>Laboratory interpretation</th></tr></thead>
-      <tbody>
-        <tr class="highlight-row"><td><div class="param-name">Fasting glucose</div><div class="param-sub">mg/dL</div></td><td><strong>109.6</strong></td><td><span class="badge badge-border">Prediabetes range</span></td></tr>
-        <tr class="highlight-row"><td><div class="param-name">Post-prandial glucose</div><div class="param-sub">mg/dL</div></td><td><strong>170</strong></td><td><span class="badge badge-border">Prediabetes range per report</span></td></tr>
-        <tr class="highlight-row"><td><div class="param-name">HbA1c</div><div class="param-sub">%</div></td><td><strong>5.7</strong></td><td><span class="badge badge-border">At prediabetes threshold</span></td></tr>
-        <tr><td><div class="param-name">Mean blood glucose</div><div class="param-sub">mg/dL · derived</div></td><td>116.89</td><td><span class="badge badge-border">Slightly above lab reference ≤115</span></td></tr>
-      </tbody>
-    </table>
-    <p style="font-size:0.82rem;color:#475569;margin-top:0.65rem;">The three glucose markers should be reviewed together by the treating clinician. The report's post-prandial category depends on the laboratory's stated ranges and the timing of the sample after a meal.</p>
+  <div class="section-head"><div><h2>Other blood chemistry and organ-function markers</h2><p class="sub">Historical values are shown at their recorded date. The supplied October 2026 report does not include repeat kidney, liver, thyroid, vitamin or iron tests, so those values are not presented as current.</p></div></div>
+  <div class="table-wrap"><table><thead><tr><th>Panel</th><th>Marker</th><th>Historical result</th><th>Historical date in summary</th><th>Reference interval in supplied summary</th></tr></thead><tbody>
+  <tr><th rowspan="6">Kidney / electrolytes</th><th>Serum urea</th><td>15.5 mg/dL</td><td>Jan 2026</td><td>19–43</td></tr>
+  <tr><th>Blood urea nitrogen (BUN)</th><td>7.24 mg/dL</td><td>Jan 2026</td><td>6–20</td></tr>
+  <tr><th>Serum creatinine</th><td>0.80 mg/dL</td><td>Jan 2026</td><td>0.67–1.17</td></tr>
+  <tr><th>Serum uric acid</th><td>5.40 mg/dL</td><td>Jan 2026</td><td>3.4–7.0</td></tr>
+  <tr><th>Sodium</th><td>140 mmol/L</td><td>Jan 2026</td><td>136–145</td></tr>
+  <tr><th>Potassium</th><td>4.34 mmol/L</td><td>Jan 2026</td><td>3.5–5.1</td></tr>
+  <tr><th rowspan="8">Liver / proteins</th><th>Total bilirubin</th><td>0.57 mg/dL</td><td>Jan 2026</td><td>&lt;1.2</td></tr>
+  <tr><th>Direct bilirubin</th><td>0.22 mg/dL</td><td>Jan 2026</td><td>0–0.3</td></tr>
+  <tr><th>Total protein</th><td>7.57 g/dL</td><td>Jan 2026</td><td>6.4–8.3</td></tr>
+  <tr><th>Albumin</th><td>4.63 g/dL</td><td>Jan 2026</td><td>3.97–4.94</td></tr>
+  <tr><th>AST / SGOT</th><td>21.8 U/L</td><td>Jan 2026</td><td>10–50</td></tr>
+  <tr><th>ALT / SGPT</th><td>22.6 U/L</td><td>Jan 2026</td><td>&lt;41</td></tr>
+  <tr><th>Alkaline phosphatase (ALP)</th><td>99.5 U/L</td><td>Jan 2026</td><td>40–129</td></tr>
+  <tr><th>GGT</th><td>13.7 U/L</td><td>Jan 2026</td><td>8–61</td></tr>
+  <tr><th rowspan="6">Thyroid / other</th><th>Total T3</th><td>1.07 ng/mL</td><td>Jan 2026</td><td>0.8–2.0</td></tr>
+  <tr><th>Total T4</th><td>6.85 µg/dL</td><td>Jan 2026</td><td>5.1–14.1</td></tr>
+  <tr><th>TSH (ultrasensitive)</th><td>2.71 µIU/mL</td><td>Jan 2026</td><td>0.27–4.20</td></tr>
+  <tr><th>Total PSA</th><td>0.77 ng/mL</td><td>Jan 2026</td><td>&lt;4.0</td></tr>
+  <tr><th>Vitamin D (25-OH)</th><td>23.1 ng/mL</td><td>Jan 2026</td><td>30–100</td></tr>
+  <tr><th>Vitamin B12</th><td>809 pg/mL</td><td>Jan 2026</td><td>197–771</td></tr>
+  <tr><th rowspan="5">Iron profile</th><th>Serum iron</th><td>86.1 µg/dL</td><td>Jan 2026</td><td>70–180</td></tr>
+  <tr><th>TIBC</th><td>341.1 µg/dL</td><td>Jan 2026</td><td>250–450</td></tr>
+  <tr><th>Transferrin</th><td>238.8 mg/dL</td><td>Jan 2026</td><td>215–365</td></tr>
+  <tr><th>Transferrin saturation</th><td>25.6%</td><td>Jan 2026</td><td>16–50</td></tr>
+  <tr><th>Ferritin</th><td>62.4 µg/L</td><td>Jan 2026</td><td>30–400</td></tr>
+  </tbody></table></div>
 
-    <h3 style="font-size:0.95rem;color:#0f4c81;margin:1.35rem 0 0.65rem;">Complete blood count</h3>
-    <table class="detail-table">
-      <thead><tr><th>Parameter</th><th>Result</th><th>Lab reference interval</th><th>Status</th></tr></thead>
-      <tbody>
-        <tr><td>Haemoglobin</td><td>15.4 g/dL</td><td>13.5–18.0</td><td><span class="badge badge-ok">Within range</span></td></tr>
-        <tr><td>Red blood cell count</td><td>5.47 million/cu mm</td><td>4.2–6.5</td><td><span class="badge badge-ok">Within range</span></td></tr>
-        <tr><td>Haematocrit (PCV)</td><td>45.9%</td><td>39–54</td><td><span class="badge badge-ok">Within range</span></td></tr>
-        <tr><td>MCV</td><td>83.8 fL</td><td>75–95</td><td><span class="badge badge-ok">Within range</span></td></tr>
-        <tr><td>MCH</td><td>28.2 pg</td><td>26–32</td><td><span class="badge badge-ok">Within range</span></td></tr>
-        <tr><td>MCHC</td><td>34 g/dL</td><td>30–35</td><td><span class="badge badge-ok">Within range</span></td></tr>
-        <tr><td>RDW-CV</td><td>13.8%</td><td>11.6–14.6</td><td><span class="badge badge-ok">Within range</span></td></tr>
-        <tr><td>Platelet count</td><td>2.67 lakh/cu mm</td><td>1.5–4.4</td><td><span class="badge badge-ok">Within range</span></td></tr>
-        <tr><td>Total WBC count</td><td>8,500 cells/cu mm</td><td>4,000–11,000</td><td><span class="badge badge-ok">Within range</span></td></tr>
-        <tr><td>Absolute neutrophils</td><td>4.60 × 10³/µL</td><td>2–7</td><td><span class="badge badge-ok">Within range</span></td></tr>
-        <tr><td>Absolute lymphocytes</td><td>3.00 × 10³/µL</td><td>1–3</td><td><span class="badge badge-ok">At upper limit</span></td></tr>
-        <tr><td>Absolute monocytes</td><td>0.60 × 10³/µL</td><td>0.2–1.0</td><td><span class="badge badge-ok">Within range</span></td></tr>
-        <tr><td>Absolute eosinophils</td><td>0.40 × 10³/µL</td><td>0.02–0.5</td><td><span class="badge badge-ok">Within range</span></td></tr>
-        <tr><td>Absolute basophils</td><td>0.00 × 10³/µL</td><td>0.01–0.05</td><td><span class="badge badge-low">Below lab interval</span></td></tr>
-      </tbody>
-    </table>
-    <p style="font-size:0.82rem;color:#475569;margin-top:0.65rem;">Differential count: neutrophils 53.7%, lymphocytes 34.6%, monocytes 6.8%, eosinophils 4.7%, and basophils 0.2%. Each percentage is within the laboratory's stated interval.</p>
+  <div class="section-head"><div><h2>Additional October 2026 calculated markers</h2><p class="sub">These are also blood-report results and are included rather than quietly disappearing into the footnotes.</p></div></div>
+  <div class="table-wrap"><table><thead><tr><th>Marker</th><th>October 2026 result</th><th>Laboratory reference / interpretation</th></tr></thead><tbody>
+  <tr><th>Mean blood glucose (derived from HbA1c)</th><td>116.89 mg/dL</td><td>≤115 mg/dL in report</td></tr>
+  <tr><th>Total cholesterol / HDL ratio</th><td>3.02</td><td>&lt;4.5 in report</td></tr>
+  </tbody></table></div>
 
-    <h3 style="font-size:0.95rem;color:#0f4c81;margin:1.35rem 0 0.65rem;">Lipid profile</h3>
-    <table class="detail-table">
-      <thead><tr><th>Parameter</th><th>Result</th><th>Laboratory reference</th><th>Status</th></tr></thead>
-      <tbody>
-        <tr><td>Total cholesterol</td><td>136 mg/dL</td><td>Desirable &lt;200</td><td><span class="badge badge-ok">Desirable</span></td></tr>
-        <tr><td>Triglycerides</td><td>120 mg/dL</td><td>Normal &lt;150</td><td><span class="badge badge-ok">Within range</span></td></tr>
-        <tr><td>HDL cholesterol</td><td>45 mg/dL</td><td>Optimal 40–60</td><td><span class="badge badge-ok">Within lab's optimal range</span></td></tr>
-        <tr><td>LDL cholesterol</td><td>67 mg/dL</td><td>Desirable &lt;100</td><td><span class="badge badge-ok">Desirable</span></td></tr>
-        <tr><td>VLDL</td><td>24 mg/dL</td><td>2–30</td><td><span class="badge badge-ok">Within range</span></td></tr>
-        <tr><td>Total cholesterol / HDL ratio</td><td>3.02</td><td>&lt;4.5</td><td><span class="badge badge-ok">Within range</span></td></tr>
-      </tbody>
-    </table>
-
-    <div class="insight-grid" style="margin-top:1.25rem;">
-      <div class="insight-card ic-amber">
-        <div class="ic-header"><div class="ic-icon">!</div><h4>Glucose markers need review</h4></div>
-        <p>Fasting glucose 109.6 mg/dL, post-prandial glucose 170 mg/dL, and HbA1c 5.7% fall in the ranges flagged by the laboratory for prediabetes. The treating clinician should interpret these values in context and decide whether follow-up testing or management changes are needed.</p>
-      </div>
-      <div class="insight-card ic-green">
-        <div class="ic-header"><div class="ic-icon">✓</div><h4>Lipid values are within stated ranges</h4></div>
-        <p>Total cholesterol, triglycerides, HDL, LDL, VLDL, and the total cholesterol/HDL ratio are all within the laboratory's listed desirable, optimal, or normal ranges on this report.</p>
-      </div>
-      <div class="insight-card ic-blue">
-        <div class="ic-header"><div class="ic-icon">i</div><h4>Most CBC values are within range</h4></div>
-        <p>Haemoglobin, red cell indices, platelets, total WBC count, and the differential percentages are within the lab's stated intervals. The absolute basophil count is reported as 0.00 against a reference interval of 0.01–0.05 × 10³/µL.</p>
-      </div>
-    </div>
-    <div style="margin-top:1rem;padding:0.9rem 1rem;background:#eff6ff;border-left:4px solid #2563eb;border-radius:8px;font-size:0.83rem;color:#1e3a8a;">
-      <strong>Review note:</strong> The newly supplied report includes CBC, glucose markers, and a lipid profile only. It does not provide new results for liver function, kidney function, thyroid, vitamins, iron, urine, or echocardiography. Those sections below refer to earlier investigations and have not been updated by this report.
-    </div>
-  </div>
-
-  <!-- TIMELINE LEGEND -->
-  <div style="background:white; border-radius:12px; padding:1rem 1.25rem; border:0.5px solid #e2e8f0; margin-bottom:1.5rem;">
-    <div style="font-size:0.78rem; font-weight:600; color:#374151; margin-bottom:0.6rem;">Test timeline — 5 visits across 2 years</div>
-    <div class="timeline-bar">
-      <div class="tl-dot"><span style="background:#6366f1;"></span>Jun 2024 — Cura Hospitals</div>
-      <div class="tl-dot"><span style="background:#0ea5e9;"></span>Jun 2025 — RAGAVS Diagnostics</div>
-      <div class="tl-dot"><span style="background:#f59e0b;"></span>Oct 2025 — Prima Diagnostics</div>
-      <div class="tl-dot"><span style="background:#10b981;"></span>Jan 2026 — Cura Hospitals</div>
-      <div class="tl-dot"><span style="background:#ef4444;"></span>Jun 2026 — Cadabams Diagnostics</div>
-    </div>
-    <div style="position:relative; height:12px; background:#f1f5f9; border-radius:6px; margin-top:0.5rem; overflow:hidden;">
-      <div style="position:absolute; left:0%; width:18%; height:100%; background:#6366f1; border-radius:6px;"></div>
-      <div style="position:absolute; left:35%; width:18%; height:100%; background:#0ea5e9; border-radius:6px;"></div>
-      <div style="position:absolute; left:55%; width:18%; height:100%; background:#f59e0b; border-radius:6px;"></div>
-      <div style="position:absolute; left:73%; width:18%; height:100%; background:#10b981; border-radius:6px;"></div>
-      <div style="position:absolute; left:98%; width:2%; height:100%; background:#ef4444; border-radius:6px;"></div>
-    </div>
-    <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#94a3b8; margin-top:0.3rem;">
-      <span>Jun 2024</span><span>Jun 2025</span><span>Oct 2025</span><span>Jan 2026</span><span>Jun 2026</span>
-    </div>
-  </div>
-
-  <!-- ─── SECTION 1: DIABETES / GLUCOSE ─── -->
-  <div class="section">
-    <div class="section-title">
-      <span class="icon" style="background:#dc2626;">🩸</span>
-      Diabetes &amp; Blood Glucose Profile
-    </div>
-
-    <div class="summary-grid">
-      <div class="summary-card">
-        <div class="sc-label">HbA1c — Latest (Jun 2026)</div>
-        <div class="sc-value trend-up">7.3%</div>
-        <div class="sc-sub">Target: &lt;7.0% · Was 6.5% (Jan 2026)</div>
-      </div>
-      <div class="summary-card">
-        <div class="sc-label">Fasting Glucose — Latest</div>
-        <div class="sc-value trend-warn">100.2 mg/dL</div>
-        <div class="sc-sub">Normal &lt;100 · borderline</div>
-      </div>
-      <div class="summary-card">
-        <div class="sc-label">Post-Prandial — Latest</div>
-        <div class="sc-value trend-down">112.5 mg/dL</div>
-        <div class="sc-sub">Normal &lt;140 · best PP in 2 years</div>
-      </div>
-      <div class="summary-card">
-        <div class="sc-label">Estimated Avg Glucose</div>
-        <div class="sc-value trend-up">162.8 mg/dL</div>
-        <div class="sc-sub">From HbA1c 7.3% (Jun 2026)</div>
-      </div>
-    </div>
-
-    <div class="chart-wrap">
-      <div class="chart-title">HbA1c trend over time (%) — target line at 7.0</div>
-      <div style="position:relative; height:220px;">
-        <canvas id="hba1cChart" role="img" aria-label="HbA1c trend chart. Values: Jun 2025: 6.0%, Jan 2026: 6.5%, Jun 2026: 7.3%">HbA1c: Jun 2025: 6.0, Jan 2026: 6.5, Jun 2026: 7.3</canvas>
-      </div>
-    </div>
-
-    <div class="chart-grid">
-      <div class="chart-wrap">
-        <div class="chart-title">Fasting Blood Glucose (mg/dL)</div>
-        <div style="position:relative; height:200px;">
-          <canvas id="fbsChart" role="img" aria-label="Fasting blood glucose over time">FBS: Jun 2024: 104, Jun 2025: 106.6, Jan 2026: 135, Jun 2026: 100.2</canvas>
-        </div>
-      </div>
-      <div class="chart-wrap">
-        <div class="chart-title">Post-Prandial Glucose (mg/dL)</div>
-        <div style="position:relative; height:200px;">
-          <canvas id="ppbsChart" role="img" aria-label="Post-prandial blood glucose over time">PPBS: Jun 2024: 186, Dec 2024: 161, Jun 2025: 146.8, Jan 2026: 269, Jun 2026: 112.5</canvas>
-        </div>
-      </div>
-    </div>
-
-    <table class="detail-table">
-      <thead>
-        <tr>
-          <th>Test</th>
-          <th>Jun 2024</th>
-          <th>Jun 2025</th>
-          <th>Dec 2024</th>
-          <th>Jan 2026</th>
-          <th>Jun 2026</th>
-          <th>Trend</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><div class="param-name">Fasting Glucose</div><div class="param-sub">mg/dL · normal &lt;100</div></td>
-          <td>104</td>
-          <td>106.6</td>
-          <td>123</td>
-          <td>135</td>
-          <td><strong>100.2</strong></td>
-          <td><span style="color:#16a34a;">↓ Improved</span></td>
-          <td><span class="badge badge-border">Borderline</span></td>
-        </tr>
-        <tr>
-          <td><div class="param-name">Post-Prandial Glucose</div><div class="param-sub">mg/dL · normal &lt;140</div></td>
-          <td>186 ⚠</td>
-          <td>146.8</td>
-          <td>161</td>
-          <td>269 ⚠</td>
-          <td><strong>112.5</strong></td>
-          <td><span style="color:#16a34a;">↓ Best yet</span></td>
-          <td><span class="badge badge-ok">Normal</span></td>
-        </tr>
-        <tr class="highlight-row">
-          <td><div class="param-name">HbA1c</div><div class="param-sub">% · target &lt;7.0</div></td>
-          <td>—</td>
-          <td>6.0</td>
-          <td>—</td>
-          <td>6.5</td>
-          <td><strong>7.3</strong></td>
-          <td><span style="color:#dc2626;">↑ Worsened</span></td>
-          <td><span class="badge badge-high">Above target</span></td>
-        </tr>
-        <tr>
-          <td><div class="param-name">Est. Avg Glucose</div><div class="param-sub">mg/dL · from HbA1c</div></td>
-          <td>—</td>
-          <td>126</td>
-          <td>—</td>
-          <td>139</td>
-          <td><strong>162.8</strong></td>
-          <td><span style="color:#dc2626;">↑ Rising</span></td>
-          <td><span class="badge badge-high">High</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- ─── SECTION 2: LIPID PROFILE ─── -->
-  <div class="section">
-    <div class="section-title">
-      <span class="icon" style="background:#7c3aed;">❤️</span>
-      Lipid Profile
-    </div>
-
-    <div class="summary-grid">
-      <div class="summary-card">
-        <div class="sc-label">Total Cholesterol — Latest</div>
-        <div class="sc-value trend-down">150.1 mg/dL</div>
-        <div class="sc-sub">Desirable &lt;200 · best in 3 years</div>
-      </div>
-      <div class="summary-card">
-        <div class="sc-label">Triglycerides — Latest</div>
-        <div class="sc-value trend-up">224.4 mg/dL</div>
-        <div class="sc-sub">Normal &lt;150 · still elevated</div>
-      </div>
-      <div class="summary-card">
-        <div class="sc-label">HDL Cholesterol — Latest</div>
-        <div class="sc-value trend-warn">39.5 mg/dL</div>
-        <div class="sc-sub">Normal &gt;40 · slightly below</div>
-      </div>
-      <div class="summary-card">
-        <div class="sc-label">LDL Cholesterol — Latest</div>
-        <div class="sc-value trend-down">65.7 mg/dL</div>
-        <div class="sc-sub">Optimal &lt;100 · excellent</div>
-      </div>
-    </div>
-
-    <div class="chart-grid">
-      <div class="chart-wrap">
-        <div class="chart-title">Triglycerides over time (mg/dL) — target &lt;150</div>
-        <div style="position:relative; height:210px;">
-          <canvas id="tgChart" role="img" aria-label="Triglycerides chart">TG: Jun 2024: 186, Jun 2025: 190.4, Dec 2024: 168, Jun 2026: 224.4</canvas>
-        </div>
-      </div>
-      <div class="chart-wrap">
-        <div class="chart-title">Cholesterol fractions comparison</div>
-        <div style="position:relative; height:210px;">
-          <canvas id="cholChart" role="img" aria-label="Cholesterol fractions over time">Cholesterol comparison</canvas>
-        </div>
-      </div>
-    </div>
-
-    <table class="detail-table">
-      <thead>
-        <tr>
-          <th>Parameter</th>
-          <th>Jun 2024</th>
-          <th>Jun 2025</th>
-          <th>Dec 2024</th>
-          <th>Jun 2026</th>
-          <th>Trend</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><div class="param-name">Total Cholesterol</div><div class="param-sub">mg/dL · desirable &lt;200</div></td>
-          <td>175</td>
-          <td>172.8</td>
-          <td>192</td>
-          <td><strong>150.1</strong></td>
-          <td><span style="color:#16a34a;">↓ Excellent</span></td>
-          <td><span class="badge badge-ok">Desirable</span></td>
-        </tr>
-        <tr class="concern-row">
-          <td><div class="param-name">Triglycerides</div><div class="param-sub">mg/dL · normal &lt;150</div></td>
-          <td>186 ⚠</td>
-          <td>190.4 ⚠</td>
-          <td>168 ⚠</td>
-          <td><strong>224.4 ⚠</strong></td>
-          <td><span style="color:#dc2626;">↑ Worsened</span></td>
-          <td><span class="badge badge-high">High</span></td>
-        </tr>
-        <tr>
-          <td><div class="param-name">HDL Cholesterol</div><div class="param-sub">mg/dL · normal &gt;40</div></td>
-          <td>53 ✓</td>
-          <td>45.8</td>
-          <td>46</td>
-          <td><strong>39.5</strong></td>
-          <td><span style="color:#dc2626;">↓ Declining</span></td>
-          <td><span class="badge badge-high">Low</span></td>
-        </tr>
-        <tr>
-          <td><div class="param-name">LDL Cholesterol</div><div class="param-sub">mg/dL · optimal &lt;100</div></td>
-          <td>84.8</td>
-          <td>101.0</td>
-          <td>112.4 ⚠</td>
-          <td><strong>65.7</strong></td>
-          <td><span style="color:#16a34a;">↓ Best yet</span></td>
-          <td><span class="badge badge-ok">Optimal</span></td>
-        </tr>
-        <tr>
-          <td><div class="param-name">VLDL Cholesterol</div><div class="param-sub">mg/dL · normal 0–30</div></td>
-          <td>37.2 ⚠</td>
-          <td>26.0</td>
-          <td>33.6 ⚠</td>
-          <td><strong>44.9 ⚠</strong></td>
-          <td><span style="color:#dc2626;">↑ High again</span></td>
-          <td><span class="badge badge-high">Elevated</span></td>
-        </tr>
-        <tr>
-          <td><div class="param-name">Chol/HDL Ratio</div><div class="param-sub">low risk: 3.3–4.4</div></td>
-          <td>3.3</td>
-          <td>3.77</td>
-          <td>4.1</td>
-          <td><strong>3.80</strong></td>
-          <td><span style="color:#2563eb;">→ Stable</span></td>
-          <td><span class="badge badge-ok">Low Risk</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- ─── SECTION 3: CBC ─── -->
-  <div class="section">
-    <div class="section-title">
-      <span class="icon" style="background:#0284c7;">🔬</span>
-      Complete Blood Count (CBC)
-    </div>
-    <table class="detail-table">
-      <thead>
-        <tr>
-          <th>Parameter</th>
-          <th>Jun 2025</th>
-          <th>Oct 2025</th>
-          <th>Jan 2026</th>
-          <th>Normal Range</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><div class="param-name">Haemoglobin</div><div class="param-sub">g/dL</div></td>
-          <td>14.9</td>
-          <td>14.8</td>
-          <td>14.3</td>
-          <td>13.0 – 18.0</td>
-          <td><span class="badge badge-ok">Normal</span></td>
-        </tr>
-        <tr>
-          <td><div class="param-name">WBC / Total Count</div><div class="param-sub">cells/cumm</div></td>
-          <td>9000</td>
-          <td>9000</td>
-          <td>10100</td>
-          <td>4000 – 11000</td>
-          <td><span class="badge badge-ok">Normal</span></td>
-        </tr>
-        <tr>
-          <td><div class="param-name">RBC Count</div><div class="param-sub">10⁶/µL</div></td>
-          <td>5.41</td>
-          <td>5.26</td>
-          <td>5.28</td>
-          <td>4.5 – 5.5</td>
-          <td><span class="badge badge-ok">Normal</span></td>
-        </tr>
-        <tr>
-          <td><div class="param-name">Platelet Count</div><div class="param-sub">Lakh/cumm</div></td>
-          <td>2.47</td>
-          <td>2.42</td>
-          <td>2.64</td>
-          <td>1.5 – 4.5</td>
-          <td><span class="badge badge-ok">Normal</span></td>
-        </tr>
-        <tr>
-          <td><div class="param-name">MCV</div><div class="param-sub">fL</div></td>
-          <td>86.3</td>
-          <td>81.5</td>
-          <td>81.8</td>
-          <td>80 – 100</td>
-          <td><span class="badge badge-ok">Normal</span></td>
-        </tr>
-        <tr class="highlight-row">
-          <td><div class="param-name">RDW-CV</div><div class="param-sub">% · red cell variability</div></td>
-          <td><strong>15.60 ⚠</strong></td>
-          <td>14.6</td>
-          <td>—</td>
-          <td>11.5 – 14.0</td>
-          <td><span class="badge badge-high">Slightly high</span></td>
-        </tr>
-        <tr>
-          <td><div class="param-name">Neutrophils</div></td>
-          <td>52.7%</td>
-          <td>56.3%</td>
-          <td>52%</td>
-          <td>40 – 75%</td>
-          <td><span class="badge badge-ok">Normal</span></td>
-        </tr>
-        <tr>
-          <td><div class="param-name">Lymphocytes</div></td>
-          <td>39.7%</td>
-          <td>33.6%</td>
-          <td>40%</td>
-          <td>20 – 45%</td>
-          <td><span class="badge badge-ok">Normal</span></td>
-        </tr>
-      </tbody>
-    </table>
-    <div style="font-size:0.8rem; color:#64748b; margin-top:0.75rem; background:#f8fafc; border-radius:8px; padding:0.65rem 1rem;">
-      <strong>Peripheral smear (Oct 2025):</strong> Normocytic normochromic blood picture. No abnormal cells. RBCs normal morphology, WBCs normal, platelets adequate. Impression: completely normal.
-    </div>
-  </div>
-
-  <!-- ─── SECTION 4: RENAL & LIVER ─── -->
-  <div class="section">
-    <div class="section-title">
-      <span class="icon" style="background:#0f766e;">🫀</span>
-      Renal Function &amp; Liver Function (Jun 2025 — RAGAVS)
-    </div>
-    <div class="chart-grid">
-      <div>
-        <table class="detail-table">
-          <thead><tr><th>Renal Parameter</th><th>Result</th><th>Normal</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><div class="param-name">Serum Urea</div></td>
-              <td><strong>15.5 mg/dL</strong></td>
-              <td>19 – 43</td>
-              <td><span class="badge badge-border">Slightly low</span></td>
-            </tr>
-            <tr>
-              <td><div class="param-name">Blood Urea Nitrogen</div></td>
-              <td>7.24 mg/dL</td>
-              <td>6 – 20</td>
-              <td><span class="badge badge-ok">Normal</span></td>
-            </tr>
-            <tr>
-              <td><div class="param-name">Serum Creatinine</div></td>
-              <td>0.80 mg/dL</td>
-              <td>0.67 – 1.17</td>
-              <td><span class="badge badge-ok">Normal</span></td>
-            </tr>
-            <tr>
-              <td><div class="param-name">Serum Uric Acid</div></td>
-              <td>5.40 mg/dL</td>
-              <td>3.4 – 7.0</td>
-              <td><span class="badge badge-ok">Normal</span></td>
-            </tr>
-            <tr>
-              <td><div class="param-name">Serum Sodium</div></td>
-              <td>140 mmol/L</td>
-              <td>136 – 145</td>
-              <td><span class="badge badge-ok">Normal</span></td>
-            </tr>
-            <tr>
-              <td><div class="param-name">Serum Potassium</div></td>
-              <td>4.34 mmol/L</td>
-              <td>3.5 – 5.1</td>
-              <td><span class="badge badge-ok">Normal</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div>
-        <table class="detail-table">
-          <thead><tr><th>Liver Parameter</th><th>Result</th><th>Normal</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><div class="param-name">Total Bilirubin</div></td>
-              <td>0.57 mg/dL</td>
-              <td>&lt;1.2</td>
-              <td><span class="badge badge-ok">Normal</span></td>
-            </tr>
-            <tr>
-              <td><div class="param-name">Direct Bilirubin</div></td>
-              <td>0.22 mg/dL</td>
-              <td>0 – 0.3</td>
-              <td><span class="badge badge-ok">Normal</span></td>
-            </tr>
-            <tr>
-              <td><div class="param-name">Total Protein</div></td>
-              <td>7.57 g/dL</td>
-              <td>6.4 – 8.3</td>
-              <td><span class="badge badge-ok">Normal</span></td>
-            </tr>
-            <tr>
-              <td><div class="param-name">Serum Albumin</div></td>
-              <td>4.63 g/dL</td>
-              <td>3.97 – 4.94</td>
-              <td><span class="badge badge-ok">Normal</span></td>
-            </tr>
-            <tr>
-              <td><div class="param-name">SGOT (AST)</div></td>
-              <td>21.8 U/L</td>
-              <td>10 – 50</td>
-              <td><span class="badge badge-ok">Normal</span></td>
-            </tr>
-            <tr>
-              <td><div class="param-name">SGPT (ALT)</div></td>
-              <td>22.6 U/L</td>
-              <td>&lt;41</td>
-              <td><span class="badge badge-ok">Normal</span></td>
-            </tr>
-            <tr>
-              <td><div class="param-name">Alkaline Phosphatase</div></td>
-              <td>99.5 U/L</td>
-              <td>40 – 129</td>
-              <td><span class="badge badge-ok">Normal</span></td>
-            </tr>
-            <tr>
-              <td><div class="param-name">GGT (Gamma GT)</div></td>
-              <td>13.7 U/L</td>
-              <td>8 – 61</td>
-              <td><span class="badge badge-ok">Normal</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─── SECTION 5: VITAMINS / THYROID / PSA ─── -->
-  <div class="section">
-    <div class="section-title">
-      <span class="icon" style="background:#9333ea;">💊</span>
-      Thyroid, Vitamins, Iron &amp; PSA (Jan 2026 — Cura Hospitals)
-    </div>
-    <div class="chart-grid">
-      <table class="detail-table">
-        <thead><tr><th>Parameter</th><th>Result</th><th>Normal</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr>
-            <td><div class="param-name">T3 (Total)</div></td>
-            <td>1.07 ng/mL</td>
-            <td>0.8 – 2.0</td>
-            <td><span class="badge badge-ok">Normal</span></td>
-          </tr>
-          <tr>
-            <td><div class="param-name">T4 (Total)</div></td>
-            <td>6.85 µg/dL</td>
-            <td>5.1 – 14.1</td>
-            <td><span class="badge badge-ok">Normal</span></td>
-          </tr>
-          <tr>
-            <td><div class="param-name">TSH (Ultrasensitive)</div></td>
-            <td>2.71 µIU/mL</td>
-            <td>0.27 – 4.20</td>
-            <td><span class="badge badge-ok">Normal</span></td>
-          </tr>
-          <tr>
-            <td><div class="param-name">PSA (Total)</div><div class="param-sub">Prostate antigen</div></td>
-            <td>0.77 ng/mL</td>
-            <td>&lt;4.0</td>
-            <td><span class="badge badge-ok">Normal</span></td>
-          </tr>
-          <tr class="highlight-row">
-            <td><div class="param-name">Vitamin D (25-OH)</div></td>
-            <td><strong>23.1 ng/mL</strong></td>
-            <td>30 – 100</td>
-            <td><span class="badge badge-border">Insufficient</span></td>
-          </tr>
-          <tr>
-            <td><div class="param-name">Vitamin B12</div></td>
-            <td><strong>809 pg/mL ⚠</strong></td>
-            <td>197 – 771</td>
-            <td><span class="badge badge-high">Elevated</span></td>
-          </tr>
-        </tbody>
-      </table>
-      <table class="detail-table">
-        <thead><tr><th>Iron Profile</th><th>Result</th><th>Normal</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr>
-            <td><div class="param-name">Serum Iron</div></td>
-            <td>86.1 µg/dL</td>
-            <td>70 – 180</td>
-            <td><span class="badge badge-ok">Normal</span></td>
-          </tr>
-          <tr>
-            <td><div class="param-name">TIBC</div></td>
-            <td>341.1 µg/dL</td>
-            <td>250 – 450</td>
-            <td><span class="badge badge-ok">Normal</span></td>
-          </tr>
-          <tr>
-            <td><div class="param-name">Transferrin</div></td>
-            <td>238.8 mg/dL</td>
-            <td>215 – 365</td>
-            <td><span class="badge badge-ok">Normal</span></td>
-          </tr>
-          <tr>
-            <td><div class="param-name">Transferrin Saturation</div></td>
-            <td>25.6%</td>
-            <td>16 – 50%</td>
-            <td><span class="badge badge-ok">Normal</span></td>
-          </tr>
-          <tr>
-            <td><div class="param-name">Ferritin</div></td>
-            <td>62.4 µg/L</td>
-            <td>30 – 400</td>
-            <td><span class="badge badge-ok">Normal</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- ─── SECTION 6: SEROLOGY ─── -->
-  <div class="section">
-    <div class="section-title">
-      <span class="icon" style="background:#166534;">🛡️</span>
-      Serology &amp; Coagulation (Oct 2025 — Prima Diagnostics)
-    </div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:0.75rem;">
-      <div class="echo-item">
-        <div class="ei-label">HBsAg</div>
-        <div class="ei-val" style="color:#16a34a;">Non-Reactive</div>
-        <div class="ei-ref">0.23 · cut-off ≥1.0</div>
-      </div>
-      <div class="echo-item">
-        <div class="ei-label">HIV (Ag/Ab)</div>
-        <div class="ei-val" style="color:#16a34a;">Non-Reactive</div>
-        <div class="ei-ref">0.15 · cut-off ≥1.0</div>
-      </div>
-      <div class="echo-item">
-        <div class="ei-label">Anti-HCV</div>
-        <div class="ei-val" style="color:#16a34a;">Non-Reactive</div>
-        <div class="ei-ref">0.19 · cut-off ≥1.0</div>
-      </div>
-      <div class="echo-item">
-        <div class="ei-label">PT Test</div>
-        <div class="ei-val">10.7 sec</div>
-        <div class="ei-ref">Normal 11–15 sec</div>
-      </div>
-      <div class="echo-item">
-        <div class="ei-label">PT INR</div>
-        <div class="ei-val" style="color:#16a34a;">0.93</div>
-        <div class="ei-ref">Normal 0.8–1.2</div>
-      </div>
-      <div class="echo-item">
-        <div class="ei-label">aPTT</div>
-        <div class="ei-val" style="color:#16a34a;">39.4 sec</div>
-        <div class="ei-ref">Normal 25–45 sec</div>
-      </div>
-      <div class="echo-item">
-        <div class="ei-label">Bleeding Time</div>
-        <div class="ei-val" style="color:#16a34a;">2.15 min</div>
-        <div class="ei-ref">Normal &lt;4.0 min</div>
-      </div>
-      <div class="echo-item">
-        <div class="ei-label">Clotting Time</div>
-        <div class="ei-val" style="color:#16a34a;">6.15 min</div>
-        <div class="ei-ref">Normal ≤8 min</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─── SECTION 7: 2D ECHO ─── -->
-  <div class="section">
-    <div class="section-title">
-      <span class="icon" style="background:#b45309;">🫁</span>
-      2D Echocardiogram (Oct 2025 — Prima Diagnostics)
-    </div>
-    <div class="echo-grid">
-      <div class="echo-item">
-        <div class="ei-label">Ejection Fraction</div>
-        <div class="ei-val" style="color:#16a34a;">60%</div>
-        <div class="ei-ref">Normal ≥55%</div>
-      </div>
-      <div class="echo-item">
-        <div class="ei-label">Left Ventricle (D)</div>
-        <div class="ei-val">4.2 cm</div>
-        <div class="ei-ref">Normal 3.5–5.6 cm</div>
-      </div>
-      <div class="echo-item">
-        <div class="ei-label">Left Atrium</div>
-        <div class="ei-val">3.5 cm</div>
-        <div class="ei-ref">Normal &lt;4.0 cm</div>
-      </div>
-      <div class="echo-item">
-        <div class="ei-label">Aorta</div>
-        <div class="ei-val">2.7 cm</div>
-        <div class="ei-ref">Normal &lt;3.5 cm</div>
-      </div>
-      <div class="echo-item">
-        <div class="ei-label">Fractional Shortening</div>
-        <div class="ei-val">31%</div>
-        <div class="ei-ref">Normal 25–45%</div>
-      </div>
-      <div class="echo-item">
-        <div class="ei-label">Tricuspid Regurgitation</div>
-        <div class="ei-val" style="color:#d97706;">Trivial TR</div>
-        <div class="ei-ref">PASP 26 mmHg · no PAH</div>
-      </div>
-    </div>
-    <div style="font-size:0.82rem; color:#064e3b; background:#d1fae5; border-radius:8px; padding:0.75rem 1rem; margin-top:0.75rem;">
-      <strong>Echo impression:</strong> Normal sized cardiac chambers. Normal LV systolic function (EF 60%). No regional wall motion abnormalities. Trivial TR with no pulmonary arterial hypertension. No clots/pericardial effusion/vegetation. All valves structurally normal. Needs clinical correlation.
-    </div>
-  </div>
-
-  <!-- ─── SECTION 8: URINE ANALYSIS ─── -->
-  <div class="section">
-    <div class="section-title">
-      <span class="icon" style="background:#0369a1;">🧪</span>
-      Urine Analysis (Jun 2025 &amp; Jan 2026)
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
-      <div>
-        <div style="font-size:0.78rem; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.5rem;">Jun 2025 — RAGAVS</div>
-        <table class="detail-table">
-          <tbody>
-            <tr><td class="param-name">Colour</td><td>Pale Yellow</td><td><span class="badge badge-ok">Normal</span></td></tr>
-            <tr><td class="param-name">Protein</td><td>NIL</td><td><span class="badge badge-ok">Normal</span></td></tr>
-            <tr><td class="param-name">Glucose</td><td>NIL</td><td><span class="badge badge-ok">Normal</span></td></tr>
-            <tr><td class="param-name">Pus Cells</td><td>2–3 /hpf</td><td><span class="badge badge-ok">Normal</span></td></tr>
-            <tr><td class="param-name">RBCs</td><td>NIL</td><td><span class="badge badge-ok">Normal</span></td></tr>
-            <tr><td class="param-name">Casts</td><td>Not Seen</td><td><span class="badge badge-ok">Normal</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div>
-        <div style="font-size:0.78rem; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.5rem;">Jan 2026 — Cura Hospitals</div>
-        <table class="detail-table">
-          <tbody>
-            <tr><td class="param-name">Colour</td><td>Pale Yellow</td><td><span class="badge badge-ok">Normal</span></td></tr>
-            <tr><td class="param-name">Albumin</td><td>NIL</td><td><span class="badge badge-ok">Normal</span></td></tr>
-            <tr><td class="param-name">Sugar</td><td>NIL</td><td><span class="badge badge-ok">Normal</span></td></tr>
-            <tr><td class="param-name">Pus Cells</td><td>4–6 /hpf</td><td><span class="badge badge-border">Borderline</span></td></tr>
-            <tr><td class="param-name">RBCs</td><td>NIL</td><td><span class="badge badge-ok">Normal</span></td></tr>
-            <tr><td class="param-name">Bacteria</td><td>NIL</td><td><span class="badge badge-ok">Normal</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─── SECTION 9: KEY INSIGHTS ─── -->
-  <div class="section">
-    <div class="section-title">
-      <span class="icon" style="background:#1d4ed8;">📊</span>
-      Key Insights &amp; Areas Requiring Attention
-    </div>
-    <div class="insight-grid">
-      <div class="insight-card ic-red">
-        <div class="ic-header">
-          <div class="ic-icon">⚠️</div>
-          <h4>HbA1c has worsened</h4>
-        </div>
-        <p>HbA1c has climbed from 6.0% (Jun 2025) → 6.5% (Jan 2026) → 7.3% (Jun 2026), now above the therapeutic target of &lt;7.0%. The estimated average glucose is 162.8 mg/dL. Diabetes management needs to be revisited urgently — diet, medications, or both.</p>
-      </div>
-      <div class="insight-card ic-red">
-        <div class="ic-header">
-          <div class="ic-icon">🧈</div>
-          <h4>Triglycerides persistently high</h4>
-        </div>
-        <p>Triglycerides have been elevated across all 4 visits: 186 → 190 → 168 → 224 mg/dL. Now at the highest recorded level of 224.4 mg/dL, well above the normal &lt;150. VLDL is also correspondingly high. This is closely linked to blood sugar control and diet.</p>
-      </div>
-      <div class="insight-card ic-amber">
-        <div class="ic-header">
-          <div class="ic-icon">🌞</div>
-          <h4>Vitamin D insufficiency</h4>
-        </div>
-        <p>Vitamin D (25-OH) was 23.1 ng/mL in Jan 2026, in the "insufficiency" range (20–30). Supplementation with Vitamin D3 and adequate sunlight exposure is recommended. This can affect bone health, immunity, and mood at this age.</p>
-      </div>
-      <div class="insight-card ic-amber">
-        <div class="ic-header">
-          <div class="ic-icon">🔽</div>
-          <h4>HDL declining trend</h4>
-        </div>
-        <p>HDL ("good cholesterol") has been falling: 53 (Jun 2024) → 45.8 (Jun 2025) → 46 (Dec 2024) → 39.5 (Jun 2026), now below the normal threshold of &gt;40 mg/dL. Exercise, reduced refined carbohydrates, and healthy fats can help raise HDL.</p>
-      </div>
-      <div class="insight-card ic-green">
-        <div class="ic-header">
-          <div class="ic-icon">✅</div>
-          <h4>LDL is excellent</h4>
-        </div>
-        <p>LDL dropped to a very healthy 65.7 mg/dL in Jun 2026, the best result in the entire 2-year record. Total cholesterol at 150.1 is also the best reading. This reflects either good dietary control or medication effect. Keep up whatever is working here.</p>
-      </div>
-      <div class="insight-card ic-green">
-        <div class="ic-header">
-          <div class="ic-icon">❤️</div>
-          <h4>Heart is structurally healthy</h4>
-        </div>
-        <p>The 2D Echo (Oct 2025) showed a normal ejection fraction of 60%, normal cardiac chambers, no wall motion abnormalities, and no pericardial effusion. Trivial tricuspid regurgitation (PASP 26 mmHg) with no pulmonary hypertension — clinically insignificant.</p>
-      </div>
-      <div class="insight-card ic-green">
-        <div class="ic-header">
-          <div class="ic-icon">🩺</div>
-          <h4>Liver, kidney &amp; thyroid normal</h4>
-        </div>
-        <p>All liver enzymes (SGOT, SGPT, ALP, GGT), renal function (creatinine 0.80, urea, electrolytes), and thyroid (TSH 2.71) are well within normal limits across all tests. No organ dysfunction detected.</p>
-      </div>
-      <div class="insight-card ic-blue">
-        <div class="ic-header">
-          <div class="ic-icon">💉</div>
-          <h4>B12 elevated</h4>
-        </div>
-        <p>Vitamin B12 was 809 pg/mL in Jan 2026, slightly above the upper reference of 771. Elevated B12 can occur with supplementation (if taking B12 injections or tablets), or occasionally liver/kidney conditions. Worth mentioning to the doctor.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─── SECTION 10: IMPROVEMENT SUMMARY ─── -->
-  <div class="section">
-    <div class="section-title">
-      <span class="icon" style="background:#15803d;">📈</span>
-      Overall Progress Summary (Jun 2024 → Jun 2026)
-    </div>
-    <div style="background:white; border-radius:12px; padding:1.25rem; border:0.5px solid #e2e8f0;">
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
-        <div>
-          <div style="font-size:0.85rem; font-weight:700; color:#15803d; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.4rem;">
-            ✅ Improvements
-          </div>
-          <div class="progress-section">
-            <div class="progress-row">
-              <div class="progress-label" style="font-size:0.76rem;">Total Cholesterol</div>
-              <div class="progress-bar-outer"><div class="progress-bar-fill" style="width:75%; background:#16a34a;"></div></div>
-              <div class="progress-val">175→150</div>
-            </div>
-            <div class="progress-row">
-              <div class="progress-label" style="font-size:0.76rem;">LDL Cholesterol</div>
-              <div class="progress-bar-outer"><div class="progress-bar-fill" style="width:80%; background:#16a34a;"></div></div>
-              <div class="progress-val">84.8→65.7</div>
-            </div>
-            <div class="progress-row">
-              <div class="progress-label" style="font-size:0.76rem;">Post-Prandial</div>
-              <div class="progress-bar-outer"><div class="progress-bar-fill" style="width:70%; background:#16a34a;"></div></div>
-              <div class="progress-val">186→112.5</div>
-            </div>
-            <div class="progress-row">
-              <div class="progress-label" style="font-size:0.76rem;">Haemoglobin</div>
-              <div class="progress-bar-outer"><div class="progress-bar-fill" style="width:90%; background:#16a34a;"></div></div>
-              <div class="progress-val">Stable 14.9</div>
-            </div>
-            <div class="progress-row">
-              <div class="progress-label" style="font-size:0.76rem;">Liver enzymes</div>
-              <div class="progress-bar-outer"><div class="progress-bar-fill" style="width:95%; background:#16a34a;"></div></div>
-              <div class="progress-val">All normal</div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div style="font-size:0.85rem; font-weight:700; color:#dc2626; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.4rem;">
-            ⚠️ Areas Needing Attention
-          </div>
-          <div class="progress-section">
-            <div class="progress-row">
-              <div class="progress-label" style="font-size:0.76rem;">HbA1c</div>
-              <div class="progress-bar-outer"><div class="progress-bar-fill" style="width:73%; background:#dc2626;"></div></div>
-              <div class="progress-val">6.0→7.3%</div>
-            </div>
-            <div class="progress-row">
-              <div class="progress-label" style="font-size:0.76rem;">Triglycerides</div>
-              <div class="progress-bar-outer"><div class="progress-bar-fill" style="width:85%; background:#dc2626;"></div></div>
-              <div class="progress-val">186→224 ⚠</div>
-            </div>
-            <div class="progress-row">
-              <div class="progress-label" style="font-size:0.76rem;">HDL Cholesterol</div>
-              <div class="progress-bar-outer"><div class="progress-bar-fill" style="width:60%; background:#d97706;"></div></div>
-              <div class="progress-val">53→39.5 ↓</div>
-            </div>
-            <div class="progress-row">
-              <div class="progress-label" style="font-size:0.76rem;">Vitamin D</div>
-              <div class="progress-bar-outer"><div class="progress-bar-fill" style="width:55%; background:#d97706;"></div></div>
-              <div class="progress-val">23.1 insuff.</div>
-            </div>
-            <div class="progress-row">
-              <div class="progress-label" style="font-size:0.76rem;">VLDL</div>
-              <div class="progress-bar-outer"><div class="progress-bar-fill" style="width:78%; background:#dc2626;"></div></div>
-              <div class="progress-val">37.2→44.9</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer">
-
-  </div>
-</div>
-
+  <div class="section-head"><div><h2>Improvements by October 2026</h2><p class="sub">Only improvements are highlighted below.</p></div></div>
+  <section class="compare-grid">
+    <article class="card compare improvements"><h3>Glucose regulation</h3>
+      <div class="change"><div><strong>HbA1c</strong><small>Jun 2026 → Oct 2026</small></div><strong>7.3% → 5.7%</strong></div>
+      <div class="change"><div><strong>Fasting glucose</strong><small>Jan 2026 → Oct 2026</small></div><strong>135 → 109.6</strong></div>
+      <div class="change"><div><strong>Post-meal glucose</strong><small>Jan 2026 → Oct 2026</small></div><strong>269 → 170</strong></div>
+    </article>
+    <article class="card compare improvements"><h3>Lipid profile</h3>
+      <div class="change"><div><strong>Total cholesterol</strong><small>Jun 2026 → Oct 2026</small></div><strong>150.1 → 136</strong></div>
+      <div class="change"><div><strong>Triglycerides</strong><small>Jun 2026 → Oct 2026</small></div><strong>224.4 → 120</strong></div>
+      <div class="change"><div><strong>HDL cholesterol</strong><small>Jun 2026 → Oct 2026</small></div><strong>39.5 → 45</strong></div>
+      <div class="change"><div><strong>VLDL</strong><small>Jun 2026 → Oct 2026</small></div><strong>44.9 → 24</strong></div>
+    </article>
+  </section>
+  <p class="foot">Complete marker inventory compiled from the supplied reports. Historical kidney/liver, thyroid, vitamin and iron results are explicitly dated as historical; they were not repeated in the October 2026 report. Urine and echocardiography findings are not blood markers and are therefore not included in these blood-marker tables.</p>
+</main>
 <script>
-const labels2yr = ['Jun 2024','Jun 2025','Dec 2024','Oct 2025','Jan 2026','Jun 2026'];
-const GRID_COLOR = 'rgba(0,0,0,0.06)';
-const baseOpts = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: { legend: { display: false } },
-  scales: {
-    x: { grid: { color: GRID_COLOR }, ticks: { font: { size: 11 }, color: '#64748b' } },
-    y: { grid: { color: GRID_COLOR }, ticks: { font: { size: 11 }, color: '#64748b' } }
-  }
-};
-
-new Chart(document.getElementById('hba1cChart'), {
-  type: 'line',
-  data: {
-    labels: ['Jun 2025','Jan 2026','Jun 2026'],
-    datasets: [
-      {
-        label: 'HbA1c %',
-        data: [6.0, 6.5, 7.3],
-        borderColor: '#dc2626',
-        backgroundColor: 'rgba(220,38,38,0.1)',
-        pointBackgroundColor: '#dc2626',
-        pointRadius: 5,
-        tension: 0.3,
-        fill: true
-      },
-      {
-        label: 'Target 7.0%',
-        data: [7.0, 7.0, 7.0],
-        borderColor: '#16a34a',
-        borderDash: [5, 5],
-        borderWidth: 1.5,
-        pointRadius: 0,
-        fill: false
-      }
-    ]
-  },
-  options: {
-    ...baseOpts,
-    plugins: {
-      legend: { display: true, position: 'top', labels: { font: { size: 11 }, color: '#374151', boxWidth: 14 } }
-    },
-    scales: {
-      x: { grid: { color: GRID_COLOR }, ticks: { font: { size: 11 }, color: '#64748b' } },
-      y: { min: 5.0, max: 8.0, grid: { color: GRID_COLOR }, ticks: { font: { size: 11 }, color: '#64748b' } }
-    }
-  }
-});
-
-new Chart(document.getElementById('fbsChart'), {
-  type: 'bar',
-  data: {
-    labels: ['Jun 2024','Jun 2025','Dec 2024','Jan 2026','Jun 2026'],
-    datasets: [{
-      label: 'Fasting glucose',
-      data: [104, 106.6, 123, 135, 100.2],
-      backgroundColor: ['#bfdbfe','#bfdbfe','#fca5a5','#fca5a5','#bbf7d0'],
-      borderColor: ['#3b82f6','#3b82f6','#dc2626','#dc2626','#16a34a'],
-      borderWidth: 1.5,
-      borderRadius: 4
-    }]
-  },
-  options: {
-    ...baseOpts,
-    scales: {
-      x: { grid: { color: GRID_COLOR }, ticks: { font: { size: 10 }, color: '#64748b' } },
-      y: { min: 80, max: 150, grid: { color: GRID_COLOR }, ticks: { font: { size: 11 }, color: '#64748b' } }
-    },
-    plugins: {
-      legend: { display: false },
-      annotation: {}
-    }
-  }
-});
-
-new Chart(document.getElementById('ppbsChart'), {
-  type: 'line',
-  data: {
-    labels: ['Jun 2024','Dec 2024','Jun 2025','Jan 2026','Jun 2026'],
-    datasets: [{
-      label: 'PP Glucose',
-      data: [186, 161, 146.8, 269, 112.5],
-      borderColor: '#7c3aed',
-      backgroundColor: 'rgba(124,58,237,0.08)',
-      pointBackgroundColor: ['#dc2626','#d97706','#d97706','#dc2626','#16a34a'],
-      pointRadius: 6,
-      tension: 0.3,
-      fill: true
-    }]
-  },
-  options: {
-    ...baseOpts,
-    scales: {
-      x: { grid: { color: GRID_COLOR }, ticks: { font: { size: 10 }, color: '#64748b' } },
-      y: { min: 80, max: 300, grid: { color: GRID_COLOR }, ticks: { font: { size: 11 }, color: '#64748b' } }
-    }
-  }
-});
-
-new Chart(document.getElementById('tgChart'), {
-  type: 'line',
-  data: {
-    labels: ['Jun 2024','Dec 2024','Jun 2025','Jun 2026'],
-    datasets: [
-      {
-        label: 'Triglycerides',
-        data: [186, 168, 190.4, 224.4],
-        borderColor: '#dc2626',
-        backgroundColor: 'rgba(220,38,38,0.08)',
-        pointBackgroundColor: '#dc2626',
-        pointRadius: 5,
-        tension: 0.3,
-        fill: true
-      },
-      {
-        label: 'Target 150',
-        data: [150, 150, 150, 150],
-        borderColor: '#16a34a',
-        borderDash: [5, 5],
-        borderWidth: 1.5,
-        pointRadius: 0
-      }
-    ]
-  },
-  options: {
-    ...baseOpts,
-    plugins: {
-      legend: { display: true, position: 'top', labels: { font: { size: 11 }, color: '#374151', boxWidth: 14 } }
-    },
-    scales: {
-      x: { grid: { color: GRID_COLOR }, ticks: { font: { size: 10 }, color: '#64748b' } },
-      y: { min: 100, max: 260, grid: { color: GRID_COLOR }, ticks: { font: { size: 11 }, color: '#64748b' } }
-    }
-  }
-});
-
-new Chart(document.getElementById('cholChart'), {
-  type: 'bar',
-  data: {
-    labels: ['Jun 2024','Jun 2025','Dec 2024','Jun 2026'],
-    datasets: [
-      {
-        label: 'Total Chol',
-        data: [175, 172.8, 192, 150.1],
-        backgroundColor: '#93c5fd',
-        borderRadius: 3
-      },
-      {
-        label: 'HDL',
-        data: [53, 45.8, 46, 39.5],
-        backgroundColor: '#6ee7b7',
-        borderRadius: 3
-      },
-      {
-        label: 'LDL',
-        data: [84.8, 101.0, 112.4, 65.7],
-        backgroundColor: '#fca5a5',
-        borderRadius: 3
-      }
-    ]
-  },
-  options: {
-    ...baseOpts,
-    plugins: {
-      legend: { display: true, position: 'top', labels: { font: { size: 10 }, color: '#374151', boxWidth: 12 } }
-    },
-    scales: {
-      x: { grid: { color: GRID_COLOR }, ticks: { font: { size: 10 }, color: '#64748b' } },
-      y: { grid: { color: GRID_COLOR }, ticks: { font: { size: 11 }, color: '#64748b' } }
-    }
-  }
-});
-</script>
-</body>
-</html>
+const labels = ["Jun 2024", "Dec 2024", "Jun 2025", "Jan 2026", "Jun 2026", "Oct 2026"];
+const common = {responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false}, plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,padding:16}},tooltip:{padding:10}}, scales:{x:{grid:{display:false},ticks:{maxRotation:0,minRotation:0}},y:{beginAtZero:false,grid:{color:'#edf1f6'},ticks:{precision:1}}}};
+const colors = {blue:'#2563eb',teal:'#0f9d8a',violet:'#7856d6',amber:'#d97706',red:'#dc5454'};
+new Chart(document.getElementById('glucoseChart'),{type:'line',data:{labels,datasets:[
+{label:'Fasting glucose',data:[104, 123, 106.6, 135, 100.2, 109.6],borderColor:colors.blue,backgroundColor:colors.blue+'18',pointRadius:4,tension:.28,spanGaps:false},
+{label:'Post-meal glucose',data:[186, 161, 146.8, 269, 112.5, 170],borderColor:colors.teal,backgroundColor:colors.teal+'18',pointRadius:4,tension:.28,spanGaps:false}
+]},options:{...common,scales:{...common.scales,y:{...common.scales.y,title:{display:true,text:'mg/dL'}}}}});
+new Chart(document.getElementById('a1cChart'),{type:'line',data:{labels,datasets:[{label:'HbA1c',data:[null, null, 6.0, 6.5, 7.3, 5.7],borderColor:colors.violet,backgroundColor:colors.violet+'22',fill:true,pointRadius:5,tension:.25,spanGaps:false}]},options:{...common,scales:{...common.scales,y:{...common.scales.y,min:4,max:8,title:{display:true,text:'%'}}}}});
+new Chart(document.getElementById('cholChart'),{type:'line',data:{labels,datasets:[
+{label:'Total cholesterol',data:[175, 192, 172.8, null, 150.1, 136],borderColor:colors.blue,pointRadius:4,tension:.25,spanGaps:false},
+{label:'LDL cholesterol',data:[84.8, 112.4, 101.0, null, 65.7, 67],borderColor:colors.red,pointRadius:4,tension:.25,spanGaps:false},
+{label:'HDL cholesterol',data:[53, 46, 45.8, null, 39.5, 45],borderColor:colors.teal,pointRadius:4,tension:.25,spanGaps:false}
+]},options:{...common,scales:{...common.scales,y:{...common.scales.y,title:{display:true,text:'mg/dL'}}}}});
+new Chart(document.getElementById('tgChart'),{type:'line',data:{labels,datasets:[
+{label:'Triglycerides',data:[186, 168, 190.4, null, 224.4, 120],borderColor:colors.amber,backgroundColor:colors.amber+'18',fill:true,pointRadius:4,tension:.25,spanGaps:false},
+{label:'VLDL',data:[37.2, 33.6, 26, null, 44.9, 24],borderColor:colors.violet,pointRadius:4,tension:.25,spanGaps:false}
+]},options:{...common,scales:{...common.scales,y:{...common.scales.y,title:{display:true,text:'mg/dL'}}}}});
+</script></body></html>
